@@ -10,3 +10,9 @@ export function createRecipe(recipe) {
         body: JSON.stringify(recipe),
     });
 }
+
+export function deleteRecipe(recipeId) {
+    return apiRequest(`/Recipes/${recipeId}`, {
+        method: 'DELETE',
+    });
+}

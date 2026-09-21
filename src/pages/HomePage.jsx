@@ -3,12 +3,17 @@ import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import CircularProgress from '@mui/material/CircularProgress';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import RecipeForm from '../components/RecipeForm';
 import { useAuth } from '../hooks/useAuth';
-import { getRecipes } from '../services/recipeService';
+import { deleteRecipe, getRecipes } from '../services/recipeService';
 
 function HomePage() {
     const { logout } = useAuth();
@@ -17,6 +22,9 @@ function HomePage() {
     const [recipes, setRecipes] = useState([]);
     const [isLoadingRecipes, setIsLoadingRecipes] = useState(true);
     const [recipeError, setRecipeError] = useState('');
+    const [recipeToDelete, setRecipeToDelete] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [deleteError, setDeleteError] = useState('');
 
     useEffect(() => {
         let isMounted = true;
@@ -68,6 +76,39 @@ function HomePage() {
         setRecipes((currentRecipes) => [recipe, ...currentRecipes]);
     };
 
+    const handleDeleteClick = (recipe) => {
+        setDeleteError('');
+        setRecipeToDelete(recipe);
+    };
+
+    const handleCloseDeleteDialog = () => {
+        if (isDeleting) {
+            return;
+        }
+
+        setDeleteError('');
+        setRecipeToDelete(null);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!recipeToDelete) {
+            return;
+        }
+
+        setDeleteError('');
+        setIsDeleting(true);
+
+        try {
+            await deleteRecipe(recipeToDelete.id);
+            setRecipes((currentRecipes) => currentRecipes.filter((recipe) => recipe.id !== recipeToDelete.id));
+            setRecipeToDelete(null);
+        } catch (error) {
+            setDeleteError(error instanceof Error ? error.message : 'Unable to delete the recipe.');
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
     return (
         <Container maxWidth="lg">
             <Stack spacing={2}>
@@ -101,17 +142,27 @@ function HomePage() {
                     <Stack spacing={2}>
                         {recipes.map((recipe) => (
                             <Paper key={recipe.id} sx={{ p: 2 }} variant="outlined">
-                                <Typography component="h3" variant="h5">
-                                    {recipe.name}
-                                </Typography>
+                                <Stack spacing={1}>
+                                    <Typography component="h3" variant="h5">
+                                        {recipe.name}
+                                    </Typography>
 
-                                {recipe.description && (
-                                    <Typography>{recipe.description}</Typography>
-                                )}
+                                    {recipe.description && (
+                                        <Typography>{recipe.description}</Typography>
+                                    )}
 
-                                <Typography color="text.secondary" variant="body2">
-                                    Created {new Date(recipe.createdAtUtc).toLocaleDateString()}
-                                </Typography>
+                                    <Typography color="text.secondary" variant="body2">
+                                        Created {new Date(recipe.createdAtUtc).toLocaleDateString()}
+                                    </Typography>
+
+                                    <Button
+                                        color="error"
+                                        onClick={() => handleDeleteClick(recipe)}
+                                        variant="outlined"
+                                    >
+                                        Delete
+                                    </Button>
+                                </Stack>
                             </Paper>
                         ))}
                     </Stack>
@@ -125,6 +176,34 @@ function HomePage() {
                     {isLoggingOut ? 'Logging out...' : 'Log out'}
                 </Button>
             </Stack>
+
+            <Dialog
+                fullWidth
+                maxWidth="sm"
+                onClose={handleCloseDeleteDialog}
+                open={recipeToDelete !== null}
+            >
+                <DialogTitle>Delete recipe?</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure you want to delete "{recipeToDelete?.name}"?
+                    </DialogContentText>
+
+                    {deleteError && <Alert severity="error" sx={{ mt: 2 }}>{deleteError}</Alert>}
+                </DialogContent>
+                <DialogActions>
+                    <Button disabled={isDeleting} onClick={handleCloseDeleteDialog}>
+                        Cancel
+                    </Button>
+                    <Button
+                        color="error"
+                        disabled={isDeleting}
+                        onClick={handleConfirmDelete}
+                    >
+                        {isDeleting ? 'Deleting...' : 'Delete'}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Container>
     );
 }
