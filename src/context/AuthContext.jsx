@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { AuthContext } from './authContext';
 import { ApiError } from '../services/apiClient';
-import { getCurrentUser } from '../services/authService';
+import { getCurrentUser, logout as logoutCurrentUser } from '../services/authService';
 
 async function loadCurrentUser() {
     try {
@@ -39,6 +39,11 @@ export function AuthProvider({ children }) {
         }
     };
 
+    const logout = async () => {
+        await logoutCurrentUser();
+        setUser(null);
+    };
+
     useEffect(() => {
         let isMounted = true;
 
@@ -70,6 +75,7 @@ export function AuthProvider({ children }) {
         isAuthenticated: user !== null,
         authError,
         refreshUser,
+        logout,
     };
 
     return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;

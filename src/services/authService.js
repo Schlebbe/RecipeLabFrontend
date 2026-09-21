@@ -17,3 +17,9 @@ export function register(credentials) {
 export function getCurrentUser() {
     return apiRequest('/Auth/me');
 }
+
+export function logout() {
+    return apiRequest('/Auth/logout', {
+        method: 'POST',
+    });
+}
