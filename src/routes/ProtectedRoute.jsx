@@ -1,10 +1,18 @@
-import { Alert, Box, CircularProgress } from '@mui/material';
+import { Alert, Box, Button, CircularProgress } from '@mui/material';
 import { Navigate, Outlet, useLocation } from 'react-router';
 import { useAuth } from '../hooks/useAuth';
 
 function ProtectedRoute() {
-    const { isAuthenticated, isLoading, authError } = useAuth();
+    const { isAuthenticated, isLoading, authError, refreshUser } = useAuth();
     const location = useLocation();
+
+    async function handleRetry() {
+        try {
+            await refreshUser();
+        } catch {
+            return null;
+        }
+    }
 
     if (isLoading) {
         return (
@@ -25,8 +33,15 @@ function ProtectedRoute() {
 
     if (authError) {
         return (
-            <Alert severity="error">
-                Unable to load your account. Please try again.
+            <Alert
+                severity="error"
+                action={
+                    <Button color="inherit" size="small" onClick={handleRetry}>
+                        Try again
+                    </Button>
+                }
+            >
+                Unable to load your account.
             </Alert>
         );
     }
