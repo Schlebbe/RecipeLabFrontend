@@ -1,17 +1,17 @@
 import "./App.css";
-import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
-import Typography from '@mui/material/Typography';
+import { Route, Routes } from 'react-router';
+import HomePage from './pages/HomePage.jsx';
+import NotFoundPage from './pages/NotFoundPage.jsx';
 
 function App() {
     return (
         <>
             <CssBaseline />
-            <Container maxWidth="lg">
-                <Typography component="h1" variant="h3">
-                    RecipeLab
-                </Typography>
-            </Container>
+            <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="*" element={<NotFoundPage />} />
+            </Routes>
         </>
     );
 }
