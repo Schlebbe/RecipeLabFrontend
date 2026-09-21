@@ -6,6 +6,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import RecipeForm from '../components/RecipeForm';
 import { useAuth } from '../hooks/useAuth';
 import { getRecipes } from '../services/recipeService';
 
@@ -62,6 +63,11 @@ function HomePage() {
         }
     };
 
+    const handleRecipeCreated = (recipe) => {
+        setRecipeError('');
+        setRecipes((currentRecipes) => [recipe, ...currentRecipes]);
+    };
+
     return (
         <Container maxWidth="lg">
             <Stack spacing={2}>
@@ -70,6 +76,8 @@ function HomePage() {
                 </Typography>
 
                 {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+
+                <RecipeForm onCreated={handleRecipeCreated} />
 
                 <Typography component="h2" variant="h4">
                     My recipes
