@@ -6,3 +6,10 @@ export function login(credentials) {
         body: JSON.stringify(credentials),
     });
 }
+
+export function register(credentials) {
+    return apiRequest('/Auth/register', {
+        method: 'POST',
+        body: JSON.stringify(credentials),
+    });
+}

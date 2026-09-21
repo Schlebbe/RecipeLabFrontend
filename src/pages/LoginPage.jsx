@@ -2,14 +2,16 @@ import { useState } from 'react';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
+import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { useNavigate } from 'react-router';
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router';
 import { login } from '../services/authService';
 
 function LoginPage() {
+    const location = useLocation();
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -52,6 +54,10 @@ function LoginPage() {
                         Log in to RecipeLab
                     </Typography>
 
+                    {location.state?.registrationSucceeded && (
+                        <Alert severity="success">Registration successful. You can now log in.</Alert>
+                    )}
+
                     {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
 
                     <Stack component="form" spacing={2} onSubmit={handleSubmit} noValidate>
@@ -85,6 +91,9 @@ function LoginPage() {
                         >
                             {isSubmitting ? 'Logging in...' : 'Log in'}
                         </Button>
+                        <Link component={RouterLink} to="/register" underline="hover" sx={{ alignSelf: 'center' }}>
+                            Create an account
+                        </Link>
                     </Stack>
                 </Stack>
             </Paper>
