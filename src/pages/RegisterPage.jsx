@@ -119,7 +119,6 @@ function RegisterPage() {
                             required
                             type="password"
                             value={password}
-                            helperText="At least 6 characters with uppercase, lowercase, number, and special character."
                         />
                         <TextField
                             autoComplete="new-password"

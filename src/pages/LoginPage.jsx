@@ -8,11 +8,13 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router';
+import { useAuth } from '../hooks/useAuth';
 import { login } from '../services/authService';
 
 function LoginPage() {
     const location = useLocation();
     const navigate = useNavigate();
+    const { refreshUser } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -38,6 +40,13 @@ function LoginPage() {
 
         try {
             await login({ email: trimmedEmail, password });
+            const currentUser = await refreshUser();
+
+            if (!currentUser) {
+                setErrorMessage('Login succeeded, but your account could not be loaded.');
+                return;
+            }
+
             navigate('/', { replace: true });
         } catch (error) {
             setErrorMessage(error instanceof Error ? error.message : 'Unable to log in.');

@@ -13,3 +13,7 @@ export function register(credentials) {
         body: JSON.stringify(credentials),
     });
 }
+
+export function getCurrentUser() {
+    return apiRequest('/Auth/me');
+}
