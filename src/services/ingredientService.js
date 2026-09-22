@@ -10,3 +10,16 @@ export function createIngredient(ingredient) {
         body: JSON.stringify(ingredient),
     });
 }
+
+export function updateIngredient(ingredientId, ingredient) {
+    return apiRequest(`/Ingredients/${ingredientId}`, {
+        method: 'PUT',
+        body: JSON.stringify(ingredient),
+    });
+}
+
+export function deleteIngredient(ingredientId) {
+    return apiRequest(`/Ingredients/${ingredientId}`, {
+        method: 'DELETE',
+    });
+}

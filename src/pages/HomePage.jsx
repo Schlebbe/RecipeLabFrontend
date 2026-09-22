@@ -11,13 +11,14 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import EditIngredientDialog from '../components/EditIngredientDialog';
 import EditRecipeDialog from '../components/EditRecipeDialog';
 import IngredientForm from '../components/IngredientForm';
 import IngredientList from '../components/IngredientList';
 import RecipeForm from '../components/RecipeForm';
 import RecipeOverview from '../components/RecipeOverview';
 import { useAuth } from '../hooks/useAuth';
-import { getIngredients } from '../services/ingredientService';
+import { deleteIngredient, getIngredients } from '../services/ingredientService';
 import { deleteRecipe, getRecipeStatistics, getRecipes } from '../services/recipeService';
 
 function HomePage() {
@@ -30,6 +31,11 @@ function HomePage() {
     const [ingredients, setIngredients] = useState([]);
     const [isLoadingIngredients, setIsLoadingIngredients] = useState(true);
     const [ingredientError, setIngredientError] = useState('');
+    const [ingredientsRefreshKey, setIngredientsRefreshKey] = useState(0);
+    const [ingredientToEdit, setIngredientToEdit] = useState(null);
+    const [ingredientToDelete, setIngredientToDelete] = useState(null);
+    const [isDeletingIngredient, setIsDeletingIngredient] = useState(false);
+    const [ingredientDeleteError, setIngredientDeleteError] = useState('');
     const [statistics, setStatistics] = useState(null);
     const [isLoadingStatistics, setIsLoadingStatistics] = useState(true);
     const [statisticsError, setStatisticsError] = useState('');
@@ -101,7 +107,7 @@ function HomePage() {
         return () => {
             isMounted = false;
         };
-    }, []);
+    }, [ingredientsRefreshKey]);
 
     useEffect(() => {
         let isMounted = true;
@@ -154,16 +160,26 @@ function HomePage() {
         setStatisticsRefreshKey((currentKey) => currentKey + 1);
     };
 
+    const refreshIngredients = () => {
+        setIngredientError('');
+        setIsLoadingIngredients(true);
+        setIngredientsRefreshKey((currentKey) => currentKey + 1);
+    };
+
     const handleRecipeCreated = (recipe) => {
         setRecipeError('');
         setRecipes((currentRecipes) => [recipe, ...currentRecipes]);
         refreshStatistics();
     };
 
-    const handleIngredientCreated = (ingredient) => {
-        setIngredientError('');
-        setIngredients((currentIngredients) => [...currentIngredients, ingredient]
-            .sort((firstIngredient, secondIngredient) => firstIngredient.name.localeCompare(secondIngredient.name)));
+    const handleIngredientCreated = () => {
+        refreshIngredients();
+        refreshStatistics();
+    };
+
+    const handleIngredientUpdated = () => {
+        refreshIngredients();
+        setIngredientToEdit(null);
         refreshStatistics();
     };
 
@@ -172,6 +188,41 @@ function HomePage() {
             recipe.id === updatedRecipe.id ? updatedRecipe : recipe
         )));
         setRecipeToEdit(null);
+        refreshStatistics();
+    };
+
+    const handleIngredientDeleteClick = (ingredient) => {
+        setIngredientDeleteError('');
+        setIngredientToDelete(ingredient);
+    };
+
+    const handleCloseIngredientDeleteDialog = () => {
+        if (isDeletingIngredient) {
+            return;
+        }
+
+        setIngredientDeleteError('');
+        setIngredientToDelete(null);
+    };
+
+    const handleConfirmIngredientDelete = async () => {
+        if (!ingredientToDelete) {
+            return;
+        }
+
+        setIngredientDeleteError('');
+        setIsDeletingIngredient(true);
+
+        try {
+            await deleteIngredient(ingredientToDelete.id);
+            refreshIngredients();
+            refreshStatistics();
+            setIngredientToDelete(null);
+        } catch (error) {
+            setIngredientDeleteError(error instanceof Error ? error.message : 'Unable to delete the ingredient.');
+        } finally {
+            setIsDeletingIngredient(false);
+        }
     };
 
     const handleDeleteClick = (recipe) => {
@@ -287,6 +338,8 @@ function HomePage() {
                     errorMessage={ingredientError}
                     ingredients={ingredients}
                     isLoading={isLoadingIngredients}
+                    onDelete={handleIngredientDeleteClick}
+                    onEdit={(ingredient) => setIngredientToEdit(ingredient)}
                 />
 
                 <Button
@@ -303,6 +356,14 @@ function HomePage() {
                     onClose={() => setRecipeToEdit(null)}
                     onUpdated={handleRecipeUpdated}
                     recipe={recipeToEdit}
+                />
+            )}
+
+            {ingredientToEdit && (
+                <EditIngredientDialog
+                    ingredient={ingredientToEdit}
+                    onClose={() => setIngredientToEdit(null)}
+                    onUpdated={handleIngredientUpdated}
                 />
             )}
 
@@ -330,6 +391,34 @@ function HomePage() {
                         onClick={handleConfirmDelete}
                     >
                         {isDeleting ? 'Deleting...' : 'Delete'}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog
+                fullWidth
+                maxWidth="sm"
+                onClose={handleCloseIngredientDeleteDialog}
+                open={ingredientToDelete !== null}
+            >
+                <DialogTitle>Delete ingredient?</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Deleting this ingredient will also remove it from any recipes that use it. Are you sure you want to delete "{ingredientToDelete?.name}"?
+                    </DialogContentText>
+
+                    {ingredientDeleteError && <Alert severity="error" sx={{ mt: 2 }}>{ingredientDeleteError}</Alert>}
+                </DialogContent>
+                <DialogActions>
+                    <Button disabled={isDeletingIngredient} onClick={handleCloseIngredientDeleteDialog}>
+                        Cancel
+                    </Button>
+                    <Button
+                        color="error"
+                        disabled={isDeletingIngredient}
+                        onClick={handleConfirmIngredientDelete}
+                    >
+                        {isDeletingIngredient ? 'Deleting...' : 'Delete'}
                     </Button>
                 </DialogActions>
             </Dialog>

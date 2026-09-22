@@ -1,4 +1,5 @@
 import Alert from '@mui/material/Alert';
+import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -7,7 +8,7 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-function IngredientList({ errorMessage, ingredients, isLoading }) {
+function IngredientList({ errorMessage, ingredients, isLoading, onDelete, onEdit }) {
     return (
         <Stack spacing={2}>
             <Typography component="h2" variant="h4">
@@ -36,7 +37,28 @@ function IngredientList({ errorMessage, ingredients, isLoading }) {
                                 divider={index < ingredients.length - 1}
                                 key={ingredient.id}
                             >
-                                <ListItemText primary={ingredient.name} />
+                                <Stack
+                                    direction={{ sm: 'row', xs: 'column' }}
+                                    spacing={1}
+                                    sx={{ width: '100%' }}
+                                >
+                                    <ListItemText primary={ingredient.name} />
+                                    <Stack direction={{ sm: 'row', xs: 'column' }} spacing={1}>
+                                        <Button
+                                            onClick={() => onEdit(ingredient)}
+                                            variant="outlined"
+                                        >
+                                            Edit
+                                        </Button>
+                                        <Button
+                                            color="error"
+                                            onClick={() => onDelete(ingredient)}
+                                            variant="outlined"
+                                        >
+                                            Delete
+                                        </Button>
+                                    </Stack>
+                                </Stack>
                             </ListItem>
                         ))}
                     </List>
