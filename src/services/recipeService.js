@@ -11,6 +11,13 @@ export function createRecipe(recipe) {
     });
 }
 
+export function updateRecipe(recipeId, recipe) {
+    return apiRequest(`/Recipes/${recipeId}`, {
+        method: 'PUT',
+        body: JSON.stringify(recipe),
+    });
+}
+
 export function deleteRecipe(recipeId) {
     return apiRequest(`/Recipes/${recipeId}`, {
         method: 'DELETE',

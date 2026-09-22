@@ -11,6 +11,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import EditRecipeDialog from '../components/EditRecipeDialog';
 import RecipeForm from '../components/RecipeForm';
 import { useAuth } from '../hooks/useAuth';
 import { deleteRecipe, getRecipes } from '../services/recipeService';
@@ -25,6 +26,7 @@ function HomePage() {
     const [recipeToDelete, setRecipeToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const [deleteError, setDeleteError] = useState('');
+    const [recipeToEdit, setRecipeToEdit] = useState(null);
 
     useEffect(() => {
         let isMounted = true;
@@ -74,6 +76,13 @@ function HomePage() {
     const handleRecipeCreated = (recipe) => {
         setRecipeError('');
         setRecipes((currentRecipes) => [recipe, ...currentRecipes]);
+    };
+
+    const handleRecipeUpdated = (updatedRecipe) => {
+        setRecipes((currentRecipes) => currentRecipes.map((recipe) => (
+            recipe.id === updatedRecipe.id ? updatedRecipe : recipe
+        )));
+        setRecipeToEdit(null);
     };
 
     const handleDeleteClick = (recipe) => {
@@ -155,13 +164,21 @@ function HomePage() {
                                         Created {new Date(recipe.createdAtUtc).toLocaleDateString()}
                                     </Typography>
 
-                                    <Button
-                                        color="error"
-                                        onClick={() => handleDeleteClick(recipe)}
-                                        variant="outlined"
-                                    >
-                                        Delete
-                                    </Button>
+                                    <Stack direction={{ sm: 'row', xs: 'column' }} spacing={1}>
+                                        <Button
+                                            onClick={() => setRecipeToEdit(recipe)}
+                                            variant="outlined"
+                                        >
+                                            Edit
+                                        </Button>
+                                        <Button
+                                            color="error"
+                                            onClick={() => handleDeleteClick(recipe)}
+                                            variant="outlined"
+                                        >
+                                            Delete
+                                        </Button>
+                                    </Stack>
                                 </Stack>
                             </Paper>
                         ))}
@@ -176,6 +193,14 @@ function HomePage() {
                     {isLoggingOut ? 'Logging out...' : 'Log out'}
                 </Button>
             </Stack>
+
+            {recipeToEdit && (
+                <EditRecipeDialog
+                    onClose={() => setRecipeToEdit(null)}
+                    onUpdated={handleRecipeUpdated}
+                    recipe={recipeToEdit}
+                />
+            )}
 
             <Dialog
                 fullWidth
