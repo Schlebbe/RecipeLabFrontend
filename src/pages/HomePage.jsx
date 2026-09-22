@@ -13,8 +13,9 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import EditRecipeDialog from '../components/EditRecipeDialog';
 import RecipeForm from '../components/RecipeForm';
+import RecipeOverview from '../components/RecipeOverview';
 import { useAuth } from '../hooks/useAuth';
-import { deleteRecipe, getRecipes } from '../services/recipeService';
+import { deleteRecipe, getRecipeStatistics, getRecipes } from '../services/recipeService';
 
 function HomePage() {
     const { logout } = useAuth();
@@ -23,6 +24,10 @@ function HomePage() {
     const [recipes, setRecipes] = useState([]);
     const [isLoadingRecipes, setIsLoadingRecipes] = useState(true);
     const [recipeError, setRecipeError] = useState('');
+    const [statistics, setStatistics] = useState(null);
+    const [isLoadingStatistics, setIsLoadingStatistics] = useState(true);
+    const [statisticsError, setStatisticsError] = useState('');
+    const [statisticsRefreshKey, setStatisticsRefreshKey] = useState(0);
     const [recipeToDelete, setRecipeToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const [deleteError, setDeleteError] = useState('');
@@ -60,6 +65,38 @@ function HomePage() {
         };
     }, []);
 
+    useEffect(() => {
+        let isMounted = true;
+
+        async function loadStatistics() {
+            try {
+                const recipeStatistics = await getRecipeStatistics();
+
+                if (!isMounted) {
+                    return;
+                }
+
+                setStatistics(recipeStatistics);
+            } catch (error) {
+                if (!isMounted) {
+                    return;
+                }
+
+                setStatisticsError(error instanceof Error ? error.message : 'Unable to load the overview.');
+            } finally {
+                if (isMounted) {
+                    setIsLoadingStatistics(false);
+                }
+            }
+        }
+
+        loadStatistics();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [statisticsRefreshKey]);
+
     const handleLogout = async () => {
         setErrorMessage('');
         setIsLoggingOut(true);
@@ -73,9 +110,16 @@ function HomePage() {
         }
     };
 
+    const refreshStatistics = () => {
+        setStatisticsError('');
+        setIsLoadingStatistics(true);
+        setStatisticsRefreshKey((currentKey) => currentKey + 1);
+    };
+
     const handleRecipeCreated = (recipe) => {
         setRecipeError('');
         setRecipes((currentRecipes) => [recipe, ...currentRecipes]);
+        refreshStatistics();
     };
 
     const handleRecipeUpdated = (updatedRecipe) => {
@@ -110,6 +154,7 @@ function HomePage() {
         try {
             await deleteRecipe(recipeToDelete.id);
             setRecipes((currentRecipes) => currentRecipes.filter((recipe) => recipe.id !== recipeToDelete.id));
+            refreshStatistics();
             setRecipeToDelete(null);
         } catch (error) {
             setDeleteError(error instanceof Error ? error.message : 'Unable to delete the recipe.');
@@ -128,6 +173,12 @@ function HomePage() {
                 {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
 
                 <RecipeForm onCreated={handleRecipeCreated} />
+
+                <RecipeOverview
+                    errorMessage={statisticsError}
+                    isLoading={isLoadingStatistics}
+                    statistics={statistics}
+                />
 
                 <Typography component="h2" variant="h4">
                     My recipes

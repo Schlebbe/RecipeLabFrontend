@@ -4,6 +4,10 @@ export function getRecipes() {
     return apiRequest('/Recipes');
 }
 
+export function getRecipeStatistics() {
+    return apiRequest('/Recipes/statistics');
+}
+
 export function createRecipe(recipe) {
     return apiRequest('/Recipes', {
         method: 'POST',
