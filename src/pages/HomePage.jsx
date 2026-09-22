@@ -12,9 +12,12 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import EditRecipeDialog from '../components/EditRecipeDialog';
+import IngredientForm from '../components/IngredientForm';
+import IngredientList from '../components/IngredientList';
 import RecipeForm from '../components/RecipeForm';
 import RecipeOverview from '../components/RecipeOverview';
 import { useAuth } from '../hooks/useAuth';
+import { getIngredients } from '../services/ingredientService';
 import { deleteRecipe, getRecipeStatistics, getRecipes } from '../services/recipeService';
 
 function HomePage() {
@@ -24,6 +27,9 @@ function HomePage() {
     const [recipes, setRecipes] = useState([]);
     const [isLoadingRecipes, setIsLoadingRecipes] = useState(true);
     const [recipeError, setRecipeError] = useState('');
+    const [ingredients, setIngredients] = useState([]);
+    const [isLoadingIngredients, setIsLoadingIngredients] = useState(true);
+    const [ingredientError, setIngredientError] = useState('');
     const [statistics, setStatistics] = useState(null);
     const [isLoadingStatistics, setIsLoadingStatistics] = useState(true);
     const [statisticsError, setStatisticsError] = useState('');
@@ -59,6 +65,38 @@ function HomePage() {
         }
 
         loadRecipes();
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+
+    useEffect(() => {
+        let isMounted = true;
+
+        async function loadIngredients() {
+            try {
+                const userIngredients = await getIngredients();
+
+                if (!isMounted) {
+                    return;
+                }
+
+                setIngredients(userIngredients);
+            } catch (error) {
+                if (!isMounted) {
+                    return;
+                }
+
+                setIngredientError(error instanceof Error ? error.message : 'Unable to load ingredients.');
+            } finally {
+                if (isMounted) {
+                    setIsLoadingIngredients(false);
+                }
+            }
+        }
+
+        loadIngredients();
 
         return () => {
             isMounted = false;
@@ -122,6 +160,13 @@ function HomePage() {
         refreshStatistics();
     };
 
+    const handleIngredientCreated = (ingredient) => {
+        setIngredientError('');
+        setIngredients((currentIngredients) => [...currentIngredients, ingredient]
+            .sort((firstIngredient, secondIngredient) => firstIngredient.name.localeCompare(secondIngredient.name)));
+        refreshStatistics();
+    };
+
     const handleRecipeUpdated = (updatedRecipe) => {
         setRecipes((currentRecipes) => currentRecipes.map((recipe) => (
             recipe.id === updatedRecipe.id ? updatedRecipe : recipe
@@ -173,6 +218,8 @@ function HomePage() {
                 {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
 
                 <RecipeForm onCreated={handleRecipeCreated} />
+
+                <IngredientForm onCreated={handleIngredientCreated} />
 
                 <RecipeOverview
                     errorMessage={statisticsError}
@@ -235,6 +282,12 @@ function HomePage() {
                         ))}
                     </Stack>
                 )}
+
+                <IngredientList
+                    errorMessage={ingredientError}
+                    ingredients={ingredients}
+                    isLoading={isLoadingIngredients}
+                />
 
                 <Button
                     disabled={isLoggingOut}
