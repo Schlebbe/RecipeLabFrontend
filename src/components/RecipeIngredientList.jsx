@@ -6,9 +6,10 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import AddRecipeIngredientForm from './AddRecipeIngredientForm';
 import { getRecipeIngredients } from '../services/recipeIngredientService';
 
-function RecipeIngredientList({ recipeId, refreshKey }) {
+function RecipeIngredientList({ ingredients, recipeId, refreshKey }) {
     const [recipeIngredients, setRecipeIngredients] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
@@ -48,6 +49,13 @@ function RecipeIngredientList({ recipeId, refreshKey }) {
         };
     }, [recipeId, refreshKey]);
 
+    const handleRecipeIngredientAdded = (recipeIngredient) => {
+        setRecipeIngredients((currentRecipeIngredients) => (
+            [...currentRecipeIngredients, recipeIngredient]
+                .sort((firstIngredient, secondIngredient) => firstIngredient.ingredientName.localeCompare(secondIngredient.ingredientName))
+        ));
+    };
+
     return (
         <Stack spacing={1}>
             <Typography component="h4" variant="h6">
@@ -83,6 +91,15 @@ function RecipeIngredientList({ recipeId, refreshKey }) {
                         </ListItem>
                     ))}
                 </List>
+            )}
+
+            {!isLoading && !errorMessage && (
+                <AddRecipeIngredientForm
+                    ingredients={ingredients}
+                    onAdded={handleRecipeIngredientAdded}
+                    recipeId={recipeId}
+                    recipeIngredients={recipeIngredients}
+                />
             )}
         </Stack>
     );

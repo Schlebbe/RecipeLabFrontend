@@ -315,6 +315,7 @@ function HomePage() {
                                     </Typography>
 
                                     <RecipeIngredientList
+                                        ingredients={ingredients}
                                         recipeId={recipe.id}
                                         refreshKey={ingredientsRefreshKey}
                                     />
