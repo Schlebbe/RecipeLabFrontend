@@ -16,6 +16,7 @@ import EditRecipeDialog from '../components/EditRecipeDialog';
 import IngredientForm from '../components/IngredientForm';
 import IngredientList from '../components/IngredientList';
 import RecipeForm from '../components/RecipeForm';
+import RecipeIngredientList from '../components/RecipeIngredientList';
 import RecipeOverview from '../components/RecipeOverview';
 import { useAuth } from '../hooks/useAuth';
 import { deleteIngredient, getIngredients } from '../services/ingredientService';
@@ -312,6 +313,11 @@ function HomePage() {
                                     <Typography color="text.secondary" variant="body2">
                                         Created {new Date(recipe.createdAtUtc).toLocaleDateString()}
                                     </Typography>
+
+                                    <RecipeIngredientList
+                                        recipeId={recipe.id}
+                                        refreshKey={ingredientsRefreshKey}
+                                    />
 
                                     <Stack direction={{ sm: 'row', xs: 'column' }} spacing={1}>
                                         <Button
