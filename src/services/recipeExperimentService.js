@@ -10,3 +10,10 @@ export function createRecipeExperiment(recipeId, experiment) {
         body: JSON.stringify(experiment),
     });
 }
+
+export function updateRecipeExperiment(experimentId, experiment) {
+    return apiRequest(`/RecipeExperiments/${experimentId}`, {
+        method: 'PUT',
+        body: JSON.stringify(experiment),
+    });
+}
