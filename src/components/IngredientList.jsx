@@ -45,12 +45,14 @@ function IngredientList({ errorMessage, ingredients, isLoading, onDelete, onEdit
                                     <ListItemText primary={ingredient.name} />
                                     <Stack direction={{ sm: 'row', xs: 'column' }} spacing={1}>
                                         <Button
+                                            aria-label={`Edit ingredient ${ingredient.name}`}
                                             onClick={() => onEdit(ingredient)}
                                             variant="outlined"
                                         >
                                             Edit
                                         </Button>
                                         <Button
+                                            aria-label={`Delete ingredient ${ingredient.name}`}
                                             color="error"
                                             onClick={() => onDelete(ingredient)}
                                             variant="outlined"

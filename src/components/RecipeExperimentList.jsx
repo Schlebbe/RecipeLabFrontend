@@ -151,12 +151,14 @@ function RecipeExperimentList({ onExperimentChanged, recipeId }) {
                                         secondary={notes}
                                     />
                                     <Button
+                                        aria-label={`Edit ${experiment.preparationMethod} experiment`}
                                         onClick={() => setExperimentToEdit(experiment)}
                                         variant="outlined"
                                     >
                                         Edit
                                     </Button>
                                     <Button
+                                        aria-label={`Delete ${experiment.preparationMethod} experiment`}
                                         color="error"
                                         onClick={() => handleExperimentDeleteClick(experiment)}
                                         variant="outlined"

@@ -329,12 +329,14 @@ function HomePage() {
 
                                     <Stack direction={{ sm: 'row', xs: 'column' }} spacing={1}>
                                         <Button
+                                            aria-label={`Edit recipe ${recipe.name}`}
                                             onClick={() => setRecipeToEdit(recipe)}
                                             variant="outlined"
                                         >
                                             Edit
                                         </Button>
                                         <Button
+                                            aria-label={`Delete recipe ${recipe.name}`}
                                             color="error"
                                             onClick={() => handleDeleteClick(recipe)}
                                             variant="outlined"
