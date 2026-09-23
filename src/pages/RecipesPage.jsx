@@ -23,7 +23,7 @@ import { useAuth } from '../hooks/useAuth';
 import { deleteIngredient, getIngredients } from '../services/ingredientService';
 import { deleteRecipe, getRecipeStatistics, getRecipes } from '../services/recipeService';
 
-function HomePage() {
+function RecipesPage() {
     const { logout } = useAuth();
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -442,4 +442,4 @@ function HomePage() {
     );
 }
 
-export default HomePage;
+export default RecipesPage;
