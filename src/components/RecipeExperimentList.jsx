@@ -16,7 +16,7 @@ import CreateRecipeExperimentForm from './CreateRecipeExperimentForm';
 import EditRecipeExperimentDialog from './EditRecipeExperimentDialog';
 import { deleteRecipeExperiment, getRecipeExperiments } from '../services/recipeExperimentService';
 
-function RecipeExperimentList({ onExperimentChanged, recipeId }) {
+function RecipeExperimentList({ recipeId }) {
     const [experiments, setExperiments] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
@@ -59,7 +59,6 @@ function RecipeExperimentList({ onExperimentChanged, recipeId }) {
 
     const handleExperimentCreated = (experiment) => {
         setExperiments((currentExperiments) => [experiment, ...currentExperiments]);
-        onExperimentChanged();
     };
 
     const handleExperimentUpdated = (updatedExperiment) => {
@@ -67,7 +66,6 @@ function RecipeExperimentList({ onExperimentChanged, recipeId }) {
             experiment.id === updatedExperiment.id ? updatedExperiment : experiment
         )));
         setExperimentToEdit(null);
-        onExperimentChanged();
     };
 
     const handleExperimentDeleteClick = (experiment) => {
@@ -97,7 +95,6 @@ function RecipeExperimentList({ onExperimentChanged, recipeId }) {
             setExperiments((currentExperiments) => currentExperiments.filter((experiment) => (
                 experiment.id !== experimentToDelete.id
             )));
-            onExperimentChanged();
             setExperimentToDelete(null);
         } catch (error) {
             setDeleteError(error instanceof Error ? error.message : 'Unable to delete the experiment.');

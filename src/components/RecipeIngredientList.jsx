@@ -16,7 +16,7 @@ import AddRecipeIngredientForm from './AddRecipeIngredientForm';
 import EditRecipeIngredientDialog from './EditRecipeIngredientDialog';
 import { deleteRecipeIngredient, getRecipeIngredients } from '../services/recipeIngredientService';
 
-function RecipeIngredientList({ ingredients, onAssociationChanged, recipeId, refreshKey }) {
+function RecipeIngredientList({ ingredients, recipeId, refreshKey }) {
     const [recipeIngredients, setRecipeIngredients] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
@@ -65,7 +65,6 @@ function RecipeIngredientList({ ingredients, onAssociationChanged, recipeId, ref
             [...currentRecipeIngredients, recipeIngredient]
                 .sort((firstIngredient, secondIngredient) => firstIngredient.ingredientName.localeCompare(secondIngredient.ingredientName))
         ));
-        onAssociationChanged();
     };
 
     const handleRecipeIngredientUpdated = (updatedRecipeIngredient) => {
@@ -104,7 +103,6 @@ function RecipeIngredientList({ ingredients, onAssociationChanged, recipeId, ref
             setRecipeIngredients((currentRecipeIngredients) => currentRecipeIngredients.filter((recipeIngredient) => (
                 recipeIngredient.ingredientId !== recipeIngredientToDelete.ingredientId
             )));
-            onAssociationChanged();
             setRecipeIngredientToDelete(null);
         } catch (error) {
             setDeleteError(error instanceof Error ? error.message : 'Unable to remove the ingredient from the recipe.');

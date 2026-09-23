@@ -15,9 +15,8 @@ import EditRecipeDialog from '../components/EditRecipeDialog';
 import RecipeExperimentList from '../components/RecipeExperimentList';
 import RecipeForm from '../components/RecipeForm';
 import RecipeIngredientList from '../components/RecipeIngredientList';
-import RecipeOverview from '../components/RecipeOverview';
 import { getIngredients } from '../services/ingredientService';
-import { deleteRecipe, getRecipeStatistics, getRecipes } from '../services/recipeService';
+import { deleteRecipe, getRecipes } from '../services/recipeService';
 
 function RecipesPage() {
     const [recipes, setRecipes] = useState([]);
@@ -25,10 +24,6 @@ function RecipesPage() {
     const [recipeError, setRecipeError] = useState('');
     const [ingredients, setIngredients] = useState([]);
     const [ingredientError, setIngredientError] = useState('');
-    const [statistics, setStatistics] = useState(null);
-    const [isLoadingStatistics, setIsLoadingStatistics] = useState(true);
-    const [statisticsError, setStatisticsError] = useState('');
-    const [statisticsRefreshKey, setStatisticsRefreshKey] = useState(0);
     const [recipeToDelete, setRecipeToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const [deleteError, setDeleteError] = useState('');
@@ -94,48 +89,9 @@ function RecipesPage() {
         };
     }, []);
 
-    useEffect(() => {
-        let isMounted = true;
-
-        async function loadStatistics() {
-            try {
-                const recipeStatistics = await getRecipeStatistics();
-
-                if (!isMounted) {
-                    return;
-                }
-
-                setStatistics(recipeStatistics);
-            } catch (error) {
-                if (!isMounted) {
-                    return;
-                }
-
-                setStatisticsError(error instanceof Error ? error.message : 'Unable to load the overview.');
-            } finally {
-                if (isMounted) {
-                    setIsLoadingStatistics(false);
-                }
-            }
-        }
-
-        loadStatistics();
-
-        return () => {
-            isMounted = false;
-        };
-    }, [statisticsRefreshKey]);
-
-    const refreshStatistics = () => {
-        setStatisticsError('');
-        setIsLoadingStatistics(true);
-        setStatisticsRefreshKey((currentKey) => currentKey + 1);
-    };
-
     const handleRecipeCreated = (recipe) => {
         setRecipeError('');
         setRecipes((currentRecipes) => [recipe, ...currentRecipes]);
-        refreshStatistics();
     };
 
     const handleRecipeUpdated = (updatedRecipe) => {
@@ -143,7 +99,6 @@ function RecipesPage() {
             recipe.id === updatedRecipe.id ? updatedRecipe : recipe
         )));
         setRecipeToEdit(null);
-        refreshStatistics();
     };
 
     const handleDeleteClick = (recipe) => {
@@ -171,7 +126,6 @@ function RecipesPage() {
         try {
             await deleteRecipe(recipeToDelete.id);
             setRecipes((currentRecipes) => currentRecipes.filter((recipe) => recipe.id !== recipeToDelete.id));
-            refreshStatistics();
             setRecipeToDelete(null);
         } catch (error) {
             setDeleteError(error instanceof Error ? error.message : 'Unable to delete the recipe.');
@@ -190,12 +144,6 @@ function RecipesPage() {
                 {ingredientError && <Alert severity="error">{ingredientError}</Alert>}
 
                 <RecipeForm onCreated={handleRecipeCreated} />
-
-                <RecipeOverview
-                    errorMessage={statisticsError}
-                    isLoading={isLoadingStatistics}
-                    statistics={statistics}
-                />
 
                 <Typography component="h2" variant="h4">
                     My recipes
@@ -234,12 +182,10 @@ function RecipesPage() {
 
                                     <RecipeIngredientList
                                         ingredients={ingredients}
-                                        onAssociationChanged={refreshStatistics}
                                         recipeId={recipe.id}
                                     />
 
                                     <RecipeExperimentList
-                                        onExperimentChanged={refreshStatistics}
                                         recipeId={recipe.id}
                                     />
 

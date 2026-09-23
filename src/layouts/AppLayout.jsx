@@ -44,6 +44,14 @@ function AppLayout() {
                             color="inherit"
                             component={RouterLink}
                             size="small"
+                            to="/overview"
+                        >
+                            Overview
+                        </Button>
+                        <Button
+                            color="inherit"
+                            component={RouterLink}
+                            size="small"
                             to="/recipes"
                         >
                             Recipes

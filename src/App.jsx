@@ -5,6 +5,7 @@ import AppLayout from './layouts/AppLayout.jsx';
 import IngredientsPage from './pages/IngredientsPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
+import OverviewPage from './pages/OverviewPage.jsx';
 import RecipesPage from './pages/RecipesPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import ProtectedRoute from './routes/ProtectedRoute.jsx';
@@ -19,8 +20,9 @@ function App() {
 
                 <Route element={<ProtectedRoute />}>
                     <Route element={<AppLayout />}>
-                        <Route element={<Navigate replace to="/recipes" />} index />
+                        <Route element={<Navigate replace to="/overview" />} index />
                         <Route path="/ingredients" element={<IngredientsPage />} />
+                        <Route path="/overview" element={<OverviewPage />} />
                         <Route path="/recipes" element={<RecipesPage />} />
                     </Route>
                 </Route>

@@ -47,7 +47,7 @@ function RecipeOverview({ errorMessage, isLoading, statistics }) {
 
     return (
         <Stack spacing={2}>
-            <Typography component="h2" variant="h4">
+            <Typography component="h1" variant="h3">
                 Overview
             </Typography>
 
