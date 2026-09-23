@@ -15,6 +15,7 @@ import EditIngredientDialog from '../components/EditIngredientDialog';
 import EditRecipeDialog from '../components/EditRecipeDialog';
 import IngredientForm from '../components/IngredientForm';
 import IngredientList from '../components/IngredientList';
+import RecipeExperimentList from '../components/RecipeExperimentList';
 import RecipeForm from '../components/RecipeForm';
 import RecipeIngredientList from '../components/RecipeIngredientList';
 import RecipeOverview from '../components/RecipeOverview';
@@ -319,6 +320,11 @@ function HomePage() {
                                         onAssociationChanged={refreshStatistics}
                                         recipeId={recipe.id}
                                         refreshKey={ingredientsRefreshKey}
+                                    />
+
+                                    <RecipeExperimentList
+                                        onExperimentChanged={refreshStatistics}
+                                        recipeId={recipe.id}
                                     />
 
                                     <Stack direction={{ sm: 'row', xs: 'column' }} spacing={1}>
