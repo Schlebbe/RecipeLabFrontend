@@ -17,3 +17,9 @@ export function updateRecipeExperiment(experimentId, experiment) {
         body: JSON.stringify(experiment),
     });
 }
+
+export function deleteRecipeExperiment(experimentId) {
+    return apiRequest(`/RecipeExperiments/${experimentId}`, {
+        method: 'DELETE',
+    });
+}

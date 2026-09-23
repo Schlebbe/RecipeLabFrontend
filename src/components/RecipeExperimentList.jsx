@@ -2,6 +2,11 @@ import { useEffect, useState } from 'react';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -9,13 +14,16 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import CreateRecipeExperimentForm from './CreateRecipeExperimentForm';
 import EditRecipeExperimentDialog from './EditRecipeExperimentDialog';
-import { getRecipeExperiments } from '../services/recipeExperimentService';
+import { deleteRecipeExperiment, getRecipeExperiments } from '../services/recipeExperimentService';
 
 function RecipeExperimentList({ onExperimentChanged, recipeId }) {
     const [experiments, setExperiments] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
     const [experimentToEdit, setExperimentToEdit] = useState(null);
+    const [experimentToDelete, setExperimentToDelete] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [deleteError, setDeleteError] = useState('');
 
     useEffect(() => {
         let isMounted = true;
@@ -60,6 +68,42 @@ function RecipeExperimentList({ onExperimentChanged, recipeId }) {
         )));
         setExperimentToEdit(null);
         onExperimentChanged();
+    };
+
+    const handleExperimentDeleteClick = (experiment) => {
+        setDeleteError('');
+        setExperimentToDelete(experiment);
+    };
+
+    const handleCloseDeleteDialog = () => {
+        if (isDeleting) {
+            return;
+        }
+
+        setDeleteError('');
+        setExperimentToDelete(null);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!experimentToDelete) {
+            return;
+        }
+
+        setDeleteError('');
+        setIsDeleting(true);
+
+        try {
+            await deleteRecipeExperiment(experimentToDelete.id);
+            setExperiments((currentExperiments) => currentExperiments.filter((experiment) => (
+                experiment.id !== experimentToDelete.id
+            )));
+            onExperimentChanged();
+            setExperimentToDelete(null);
+        } catch (error) {
+            setDeleteError(error instanceof Error ? error.message : 'Unable to delete the experiment.');
+        } finally {
+            setIsDeleting(false);
+        }
     };
 
     return (
@@ -112,6 +156,13 @@ function RecipeExperimentList({ onExperimentChanged, recipeId }) {
                                     >
                                         Edit
                                     </Button>
+                                    <Button
+                                        color="error"
+                                        onClick={() => handleExperimentDeleteClick(experiment)}
+                                        variant="outlined"
+                                    >
+                                        Delete
+                                    </Button>
                                 </Stack>
                             </ListItem>
                         );
@@ -125,6 +176,34 @@ function RecipeExperimentList({ onExperimentChanged, recipeId }) {
                     recipeId={recipeId}
                 />
             )}
+
+            <Dialog
+                fullWidth
+                maxWidth="sm"
+                onClose={handleCloseDeleteDialog}
+                open={experimentToDelete !== null}
+            >
+                <DialogTitle>Delete experiment?</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        This will permanently delete the experiment and its rating from this recipe. Are you sure you want to delete "{experimentToDelete?.preparationMethod}"?
+                    </DialogContentText>
+
+                    {deleteError && <Alert severity="error" sx={{ mt: 2 }}>{deleteError}</Alert>}
+                </DialogContent>
+                <DialogActions>
+                    <Button disabled={isDeleting} onClick={handleCloseDeleteDialog}>
+                        Cancel
+                    </Button>
+                    <Button
+                        color="error"
+                        disabled={isDeleting}
+                        onClick={handleConfirmDelete}
+                    >
+                        {isDeleting ? 'Deleting...' : 'Delete'}
+                    </Button>
+                </DialogActions>
+            </Dialog>
 
             {experimentToEdit && (
                 <EditRecipeExperimentDialog
