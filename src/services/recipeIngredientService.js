@@ -17,3 +17,9 @@ export function updateRecipeIngredient(recipeId, ingredientId, recipeIngredient)
         body: JSON.stringify(recipeIngredient),
     });
 }
+
+export function deleteRecipeIngredient(recipeId, ingredientId) {
+    return apiRequest(`/RecipeIngredients/recipe/${recipeId}/ingredient/${ingredientId}`, {
+        method: 'DELETE',
+    });
+}

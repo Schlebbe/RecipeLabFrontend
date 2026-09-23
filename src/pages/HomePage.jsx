@@ -316,6 +316,7 @@ function HomePage() {
 
                                     <RecipeIngredientList
                                         ingredients={ingredients}
+                                        onAssociationChanged={refreshStatistics}
                                         recipeId={recipe.id}
                                         refreshKey={ingredientsRefreshKey}
                                     />
