@@ -10,3 +10,10 @@ export function addRecipeIngredient(recipeId, recipeIngredient) {
         body: JSON.stringify(recipeIngredient),
     });
 }
+
+export function updateRecipeIngredient(recipeId, ingredientId, recipeIngredient) {
+    return apiRequest(`/RecipeIngredients/recipe/${recipeId}/ingredient/${ingredientId}`, {
+        method: 'PUT',
+        body: JSON.stringify(recipeIngredient),
+    });
+}

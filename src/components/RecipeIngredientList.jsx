@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Alert from '@mui/material/Alert';
+import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -7,12 +8,14 @@ import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import AddRecipeIngredientForm from './AddRecipeIngredientForm';
+import EditRecipeIngredientDialog from './EditRecipeIngredientDialog';
 import { getRecipeIngredients } from '../services/recipeIngredientService';
 
 function RecipeIngredientList({ ingredients, recipeId, refreshKey }) {
     const [recipeIngredients, setRecipeIngredients] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
+    const [recipeIngredientToEdit, setRecipeIngredientToEdit] = useState(null);
 
     useEffect(() => {
         let isMounted = true;
@@ -56,6 +59,15 @@ function RecipeIngredientList({ ingredients, recipeId, refreshKey }) {
         ));
     };
 
+    const handleRecipeIngredientUpdated = (updatedRecipeIngredient) => {
+        setRecipeIngredients((currentRecipeIngredients) => currentRecipeIngredients.map((recipeIngredient) => (
+            recipeIngredient.ingredientId === updatedRecipeIngredient.ingredientId
+                ? updatedRecipeIngredient
+                : recipeIngredient
+        )));
+        setRecipeIngredientToEdit(null);
+    };
+
     return (
         <Stack spacing={1}>
             <Typography component="h4" variant="h6">
@@ -84,10 +96,22 @@ function RecipeIngredientList({ ingredients, recipeId, refreshKey }) {
                             divider={index < recipeIngredients.length - 1}
                             key={recipeIngredient.ingredientId}
                         >
-                            <ListItemText
-                                primary={recipeIngredient.ingredientName}
-                                secondary={recipeIngredient.quantity || undefined}
-                            />
+                            <Stack
+                                direction={{ sm: 'row', xs: 'column' }}
+                                spacing={1}
+                                sx={{ width: '100%' }}
+                            >
+                                <ListItemText
+                                    primary={recipeIngredient.ingredientName}
+                                    secondary={recipeIngredient.quantity || undefined}
+                                />
+                                <Button
+                                    onClick={() => setRecipeIngredientToEdit(recipeIngredient)}
+                                    variant="outlined"
+                                >
+                                    Edit
+                                </Button>
+                            </Stack>
                         </ListItem>
                     ))}
                 </List>
@@ -99,6 +123,15 @@ function RecipeIngredientList({ ingredients, recipeId, refreshKey }) {
                     onAdded={handleRecipeIngredientAdded}
                     recipeId={recipeId}
                     recipeIngredients={recipeIngredients}
+                />
+            )}
+
+            {recipeIngredientToEdit && (
+                <EditRecipeIngredientDialog
+                    onClose={() => setRecipeIngredientToEdit(null)}
+                    onUpdated={handleRecipeIngredientUpdated}
+                    recipeId={recipeId}
+                    recipeIngredient={recipeIngredientToEdit}
                 />
             )}
         </Stack>
