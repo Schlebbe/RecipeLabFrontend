@@ -1,5 +1,6 @@
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
+import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -63,43 +64,51 @@ function RecipeOverview({ errorMessage, isLoading, statistics }) {
 
             {!isLoading && !errorMessage && statistics && (
                 <Stack spacing={2}>
-                    <Stack direction={{ sm: 'row', xs: 'column' }} spacing={2}>
-                        <Paper sx={{ flex: 1, p: 2 }} variant="outlined">
-                            <Typography color="text.secondary" variant="body2">
-                                Recipes
-                            </Typography>
-                            <Typography component="h3" variant="h4">
-                                {statistics.recipeCount}
-                            </Typography>
-                        </Paper>
+                    <Grid container spacing={2}>
+                        <Grid size={{ md: 3, sm: 6, xs: 12 }}>
+                            <Paper sx={{ height: '100%', p: 2 }} variant="outlined">
+                                <Typography color="text.secondary" variant="body2">
+                                    Recipes
+                                </Typography>
+                                <Typography component="h3" variant="h4">
+                                    {statistics.recipeCount}
+                                </Typography>
+                            </Paper>
+                        </Grid>
 
-                        <Paper sx={{ flex: 1, p: 2 }} variant="outlined">
-                            <Typography color="text.secondary" variant="body2">
-                                Ingredients
-                            </Typography>
-                            <Typography component="h3" variant="h4">
-                                {statistics.ingredientCount}
-                            </Typography>
-                        </Paper>
+                        <Grid size={{ md: 3, sm: 6, xs: 12 }}>
+                            <Paper sx={{ height: '100%', p: 2 }} variant="outlined">
+                                <Typography color="text.secondary" variant="body2">
+                                    Ingredients
+                                </Typography>
+                                <Typography component="h3" variant="h4">
+                                    {statistics.ingredientCount}
+                                </Typography>
+                            </Paper>
+                        </Grid>
 
-                        <Paper sx={{ flex: 1, p: 2 }} variant="outlined">
-                            <Typography color="text.secondary" variant="body2">
-                                Experiments
-                            </Typography>
-                            <Typography component="h3" variant="h4">
-                                {statistics.experimentCount}
-                            </Typography>
-                        </Paper>
+                        <Grid size={{ md: 3, sm: 6, xs: 12 }}>
+                            <Paper sx={{ height: '100%', p: 2 }} variant="outlined">
+                                <Typography color="text.secondary" variant="body2">
+                                    Experiments
+                                </Typography>
+                                <Typography component="h3" variant="h4">
+                                    {statistics.experimentCount}
+                                </Typography>
+                            </Paper>
+                        </Grid>
 
-                        <Paper sx={{ flex: 1, p: 2 }} variant="outlined">
-                            <Typography color="text.secondary" variant="body2">
-                                Average rating
-                            </Typography>
-                            <Typography component="h3" variant="h4">
-                                {averageRating}
-                            </Typography>
-                        </Paper>
-                    </Stack>
+                        <Grid size={{ md: 3, sm: 6, xs: 12 }}>
+                            <Paper sx={{ height: '100%', p: 2 }} variant="outlined">
+                                <Typography color="text.secondary" variant="body2">
+                                    Average rating
+                                </Typography>
+                                <Typography component="h3" variant="h4">
+                                    {averageRating}
+                                </Typography>
+                            </Paper>
+                        </Grid>
+                    </Grid>
 
                     <Stack direction={{ md: 'row', xs: 'column' }} spacing={2}>
                         <TopRatedList
