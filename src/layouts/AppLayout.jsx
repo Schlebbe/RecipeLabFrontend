@@ -6,8 +6,31 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { Link as RouterLink, Outlet } from 'react-router';
+import { Link as RouterLink, Outlet, useLocation } from 'react-router';
 import { useAuth } from '../hooks/useAuth';
+
+function NavigationButton({ children, to }) {
+    const { pathname } = useLocation();
+    const isActive = pathname === to;
+
+    return (
+        <Button
+            aria-current={isActive ? 'page' : undefined}
+            color="inherit"
+            component={RouterLink}
+            size="small"
+            sx={isActive ? {
+                backgroundColor: 'rgba(255, 255, 255, 0.18)',
+                '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.28)',
+                },
+            } : undefined}
+            to={to}
+        >
+            {children}
+        </Button>
+    );
+}
 
 function AppLayout() {
     const { logout } = useAuth();
@@ -31,39 +54,30 @@ function AppLayout() {
         <>
             <AppBar position="static">
                 <Toolbar sx={{ flexWrap: 'wrap', gap: 1, py: 1 }}>
-                    <Typography
-                        component="div"
-                        sx={{ flexGrow: 1, minWidth: 120 }}
-                        variant="h6"
-                    >
-                        RecipeLab
-                    </Typography>
+                    <Box sx={{ flexGrow: 1, minWidth: 120 }}>
+                        <Typography
+                            component={RouterLink}
+                            sx={{
+                                color: 'inherit',
+                                textDecoration: 'none',
+                            }}
+                            to="/overview"
+                            variant="h6"
+                        >
+                            RecipeLab
+                        </Typography>
+                    </Box>
 
                     <Stack direction="row" spacing={1}>
-                        <Button
-                            color="inherit"
-                            component={RouterLink}
-                            size="small"
-                            to="/overview"
-                        >
+                        <NavigationButton to="/overview">
                             Overview
-                        </Button>
-                        <Button
-                            color="inherit"
-                            component={RouterLink}
-                            size="small"
-                            to="/recipes"
-                        >
+                        </NavigationButton>
+                        <NavigationButton to="/recipes">
                             Recipes
-                        </Button>
-                        <Button
-                            color="inherit"
-                            component={RouterLink}
-                            size="small"
-                            to="/ingredients"
-                        >
+                        </NavigationButton>
+                        <NavigationButton to="/ingredients">
                             Ingredients
-                        </Button>
+                        </NavigationButton>
                         <Button
                             aria-busy={isLoggingOut}
                             color="inherit"
