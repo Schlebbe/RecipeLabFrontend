@@ -189,10 +189,15 @@ function RecipesPage() {
                                         recipeId={recipe.id}
                                     />
 
-                                    <Stack direction={{ sm: 'row', xs: 'column' }} spacing={1}>
+                                    <Stack
+                                        alignItems="flex-start"
+                                        direction={{ sm: 'row', xs: 'column' }}
+                                        spacing={1}
+                                    >
                                         <Button
                                             aria-label={`Edit recipe ${recipe.name}`}
                                             onClick={() => setRecipeToEdit(recipe)}
+                                            size="small"
                                             variant="outlined"
                                         >
                                             Edit
@@ -201,6 +206,7 @@ function RecipesPage() {
                                             aria-label={`Delete recipe ${recipe.name}`}
                                             color="error"
                                             onClick={() => handleDeleteClick(recipe)}
+                                            size="small"
                                             variant="outlined"
                                         >
                                             Delete

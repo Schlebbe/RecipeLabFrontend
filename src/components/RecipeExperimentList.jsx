@@ -147,21 +147,25 @@ function RecipeExperimentList({ recipeId }) {
                                         primary={`${experiment.preparationMethod} · ${experiment.rating}/5`}
                                         secondary={notes}
                                     />
-                                    <Button
-                                        aria-label={`Edit ${experiment.preparationMethod} experiment`}
-                                        onClick={() => setExperimentToEdit(experiment)}
-                                        variant="outlined"
-                                    >
-                                        Edit
-                                    </Button>
-                                    <Button
-                                        aria-label={`Delete ${experiment.preparationMethod} experiment`}
-                                        color="error"
-                                        onClick={() => handleExperimentDeleteClick(experiment)}
-                                        variant="outlined"
-                                    >
-                                        Delete
-                                    </Button>
+                                    <Stack direction="row" spacing={1}>
+                                        <Button
+                                            aria-label={`Edit ${experiment.preparationMethod} experiment`}
+                                            onClick={() => setExperimentToEdit(experiment)}
+                                            size="small"
+                                            variant="outlined"
+                                        >
+                                            Edit
+                                        </Button>
+                                        <Button
+                                            aria-label={`Delete ${experiment.preparationMethod} experiment`}
+                                            color="error"
+                                            onClick={() => handleExperimentDeleteClick(experiment)}
+                                            size="small"
+                                            variant="outlined"
+                                        >
+                                            Delete
+                                        </Button>
+                                    </Stack>
                                 </Stack>
                             </ListItem>
                         );

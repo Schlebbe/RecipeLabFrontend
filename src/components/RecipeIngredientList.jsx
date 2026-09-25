@@ -148,21 +148,25 @@ function RecipeIngredientList({ ingredients, recipeId, refreshKey }) {
                                     primary={recipeIngredient.ingredientName}
                                     secondary={recipeIngredient.quantity || undefined}
                                 />
-                                <Button
-                                    aria-label={`Edit ${recipeIngredient.ingredientName} quantity`}
-                                    onClick={() => setRecipeIngredientToEdit(recipeIngredient)}
-                                    variant="outlined"
-                                >
-                                    Edit
-                                </Button>
-                                <Button
-                                    aria-label={`Delete ${recipeIngredient.ingredientName} from recipe`}
-                                    color="error"
-                                    onClick={() => handleRecipeIngredientDeleteClick(recipeIngredient)}
-                                    variant="outlined"
-                                >
-                                    Delete
-                                </Button>
+                                <Stack direction="row" spacing={1}>
+                                    <Button
+                                        aria-label={`Edit ${recipeIngredient.ingredientName} quantity`}
+                                        onClick={() => setRecipeIngredientToEdit(recipeIngredient)}
+                                        size="small"
+                                        variant="outlined"
+                                    >
+                                        Edit
+                                    </Button>
+                                    <Button
+                                        aria-label={`Delete ${recipeIngredient.ingredientName} from recipe`}
+                                        color="error"
+                                        onClick={() => handleRecipeIngredientDeleteClick(recipeIngredient)}
+                                        size="small"
+                                        variant="outlined"
+                                    >
+                                        Delete
+                                    </Button>
+                                </Stack>
                             </Stack>
                         </ListItem>
                     ))}
