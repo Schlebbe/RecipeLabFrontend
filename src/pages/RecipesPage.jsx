@@ -11,9 +11,9 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import CreateRecipeDialog from '../components/CreateRecipeDialog';
 import EditRecipeDialog from '../components/EditRecipeDialog';
 import RecipeExperimentList from '../components/RecipeExperimentList';
-import RecipeForm from '../components/RecipeForm';
 import RecipeIngredientList from '../components/RecipeIngredientList';
 import { getIngredients } from '../services/ingredientService';
 import { deleteRecipe, getRecipes } from '../services/recipeService';
@@ -24,6 +24,7 @@ function RecipesPage() {
     const [recipeError, setRecipeError] = useState('');
     const [ingredients, setIngredients] = useState([]);
     const [ingredientError, setIngredientError] = useState('');
+    const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
     const [recipeToDelete, setRecipeToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const [deleteError, setDeleteError] = useState('');
@@ -92,6 +93,7 @@ function RecipesPage() {
     const handleRecipeCreated = (recipe) => {
         setRecipeError('');
         setRecipes((currentRecipes) => [recipe, ...currentRecipes]);
+        setIsCreateDialogOpen(false);
     };
 
     const handleRecipeUpdated = (updatedRecipe) => {
@@ -143,7 +145,15 @@ function RecipesPage() {
 
                 {ingredientError && <Alert severity="error">{ingredientError}</Alert>}
 
-                <RecipeForm onCreated={handleRecipeCreated} />
+                <Button
+                    aria-haspopup="dialog"
+                    onClick={() => setIsCreateDialogOpen(true)}
+                    size="small"
+                    sx={{ alignSelf: 'flex-start' }}
+                    variant="contained"
+                >
+                    Add recipe
+                </Button>
 
                 <Typography component="h2" variant="h4">
                     My recipes
@@ -219,6 +229,13 @@ function RecipesPage() {
                 )}
 
             </Stack>
+
+            {isCreateDialogOpen && (
+                <CreateRecipeDialog
+                    onClose={() => setIsCreateDialogOpen(false)}
+                    onCreated={handleRecipeCreated}
+                />
+            )}
 
             {recipeToEdit && (
                 <EditRecipeDialog
