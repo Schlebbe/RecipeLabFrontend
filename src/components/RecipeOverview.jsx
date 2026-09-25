@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 
 function TopRatedList({ idKey, items, nameKey, title }) {
     return (
-        <Paper sx={{ flex: 1, p: 2 }} variant="outlined">
+        <Paper sx={{ flex: 1, minWidth: 0, p: 2 }} variant="outlined">
             <Typography component="h3" variant="h6">
                 {title}
             </Typography>
@@ -31,6 +31,7 @@ function TopRatedList({ idKey, items, nameKey, title }) {
                                 <ListItemText
                                     primary={item[nameKey]}
                                     secondary={`${item.averageRating.toFixed(1)} average rating · ${item.experimentCount} ${experimentLabel}`}
+                                    sx={{ minWidth: 0, overflowWrap: 'anywhere' }}
                                 />
                             </ListItem>
                         );
