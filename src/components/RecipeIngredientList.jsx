@@ -149,6 +149,7 @@ function RecipeIngredientList({ ingredients, recipeId, refreshKey }) {
                                 <ListItemText
                                     primary={recipeIngredient.ingredientName}
                                     secondary={recipeIngredient.quantity || undefined}
+                                    sx={{ minWidth: 0, overflowWrap: 'anywhere' }}
                                 />
                                 <Stack direction="row" spacing={1}>
                                     <Button

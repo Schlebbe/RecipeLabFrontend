@@ -9,12 +9,12 @@ function RecipeCard({ ingredients, onDelete, onEdit, recipe }) {
     return (
         <Paper sx={{ p: 2 }} variant="outlined">
             <Stack spacing={1}>
-                <Typography component="h3" variant="h5">
+                <Typography component="h3" sx={{ overflowWrap: 'anywhere' }} variant="h5">
                     {recipe.name}
                 </Typography>
 
                 {recipe.description && (
-                    <Typography>{recipe.description}</Typography>
+                    <Typography sx={{ overflowWrap: 'anywhere' }}>{recipe.description}</Typography>
                 )}
 
                 <Typography color="text.secondary" variant="body2">

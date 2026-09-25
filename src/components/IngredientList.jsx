@@ -42,7 +42,10 @@ function IngredientList({ errorMessage, ingredients, isLoading, onDelete, onEdit
                                     spacing={1}
                                     sx={{ width: '100%' }}
                                 >
-                                    <ListItemText primary={ingredient.name} />
+                                    <ListItemText
+                                        primary={ingredient.name}
+                                        sx={{ minWidth: 0, overflowWrap: 'anywhere' }}
+                                    />
                                     <Stack direction="row" spacing={1}>
                                         <Button
                                             aria-label={`Edit ingredient ${ingredient.name}`}

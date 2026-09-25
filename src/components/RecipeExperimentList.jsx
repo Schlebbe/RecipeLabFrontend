@@ -144,6 +144,7 @@ function RecipeExperimentList({ recipeId }) {
                                     <ListItemText
                                         primary={`${experiment.preparationMethod} · ${experiment.rating}/5`}
                                         secondary={notes}
+                                        sx={{ minWidth: 0, overflowWrap: 'anywhere' }}
                                     />
                                     <Stack direction="row" spacing={1}>
                                         <Button
