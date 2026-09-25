@@ -12,7 +12,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import AddRecipeIngredientForm from './AddRecipeIngredientForm';
+import AddRecipeIngredientDialog from './AddRecipeIngredientDialog';
 import EditRecipeIngredientDialog from './EditRecipeIngredientDialog';
 import { deleteRecipeIngredient, getRecipeIngredients } from '../services/recipeIngredientService';
 
@@ -20,6 +20,7 @@ function RecipeIngredientList({ ingredients, recipeId, refreshKey }) {
     const [recipeIngredients, setRecipeIngredients] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
+    const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
     const [recipeIngredientToEdit, setRecipeIngredientToEdit] = useState(null);
     const [recipeIngredientToDelete, setRecipeIngredientToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -60,11 +61,16 @@ function RecipeIngredientList({ ingredients, recipeId, refreshKey }) {
         };
     }, [recipeId, refreshKey]);
 
+    const availableIngredients = ingredients.filter((ingredient) => (
+        !recipeIngredients.some((recipeIngredient) => recipeIngredient.ingredientId === ingredient.id)
+    ));
+
     const handleRecipeIngredientAdded = (recipeIngredient) => {
         setRecipeIngredients((currentRecipeIngredients) => (
             [...currentRecipeIngredients, recipeIngredient]
                 .sort((firstIngredient, secondIngredient) => firstIngredient.ingredientName.localeCompare(secondIngredient.ingredientName))
         ));
+        setIsCreateDialogOpen(false);
     };
 
     const handleRecipeIngredientUpdated = (updatedRecipeIngredient) => {
@@ -174,12 +180,35 @@ function RecipeIngredientList({ ingredients, recipeId, refreshKey }) {
             )}
 
             {!isLoading && !errorMessage && (
-                <AddRecipeIngredientForm
-                    ingredients={ingredients}
-                    onAdded={handleRecipeIngredientAdded}
-                    recipeId={recipeId}
-                    recipeIngredients={recipeIngredients}
-                />
+                availableIngredients.length === 0 ? (
+                    <Typography>
+                        {ingredients.length === 0
+                            ? 'Create an ingredient before adding one to this recipe.'
+                            : 'All your ingredients are already added to this recipe.'}
+                    </Typography>
+                ) : (
+                    <>
+                        <Button
+                            aria-haspopup="dialog"
+                            onClick={() => setIsCreateDialogOpen(true)}
+                            size="small"
+                            sx={{ alignSelf: 'flex-start' }}
+                            variant="contained"
+                        >
+                            Add ingredient
+                        </Button>
+
+                        {isCreateDialogOpen && (
+                            <AddRecipeIngredientDialog
+                                ingredients={ingredients}
+                                onAdded={handleRecipeIngredientAdded}
+                                onClose={() => setIsCreateDialogOpen(false)}
+                                recipeId={recipeId}
+                                recipeIngredients={recipeIngredients}
+                            />
+                        )}
+                    </>
+                )
             )}
 
             <Dialog
