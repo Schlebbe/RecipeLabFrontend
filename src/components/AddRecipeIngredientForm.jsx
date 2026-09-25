@@ -100,6 +100,8 @@ function AddRecipeIngredientForm({ ingredients, onAdded, recipeId, recipeIngredi
                     <Button
                         aria-busy={isSubmitting}
                         disabled={isSubmitting}
+                        size="small"
+                        sx={{ alignSelf: 'flex-start' }}
                         type="submit"
                         variant="contained"
                     >

@@ -83,6 +83,7 @@ function EditIngredientDialog({ ingredient, onClose, onUpdated }) {
                     <Button
                         aria-busy={isSubmitting}
                         disabled={isSubmitting}
+                        size="small"
                         type="submit"
                         variant="contained"
                     >

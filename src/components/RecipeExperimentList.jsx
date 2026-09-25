@@ -180,6 +180,7 @@ function RecipeExperimentList({ recipeId }) {
                     aria-haspopup="dialog"
                     onClick={() => setIsCreateDialogOpen(true)}
                     size="small"
+                    sx={{ alignSelf: 'flex-start' }}
                     variant="contained"
                 >
                     Add experiment

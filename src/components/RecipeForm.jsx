@@ -83,6 +83,8 @@ function RecipeForm({ onCreated }) {
             <Button
                 aria-busy={isSubmitting}
                 disabled={isSubmitting}
+                size="small"
+                sx={{ alignSelf: 'flex-start' }}
                 type="submit"
                 variant="contained"
             >
