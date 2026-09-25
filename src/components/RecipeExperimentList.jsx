@@ -12,7 +12,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import CreateRecipeExperimentForm from './CreateRecipeExperimentForm';
+import CreateRecipeExperimentDialog from './CreateRecipeExperimentDialog';
 import EditRecipeExperimentDialog from './EditRecipeExperimentDialog';
 import { deleteRecipeExperiment, getRecipeExperiments } from '../services/recipeExperimentService';
 
@@ -20,6 +20,7 @@ function RecipeExperimentList({ recipeId }) {
     const [experiments, setExperiments] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
+    const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
     const [experimentToEdit, setExperimentToEdit] = useState(null);
     const [experimentToDelete, setExperimentToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -59,6 +60,7 @@ function RecipeExperimentList({ recipeId }) {
 
     const handleExperimentCreated = (experiment) => {
         setExperiments((currentExperiments) => [experiment, ...currentExperiments]);
+        setIsCreateDialogOpen(false);
     };
 
     const handleExperimentUpdated = (updatedExperiment) => {
@@ -174,7 +176,19 @@ function RecipeExperimentList({ recipeId }) {
             )}
 
             {!isLoading && !errorMessage && (
-                <CreateRecipeExperimentForm
+                <Button
+                    aria-haspopup="dialog"
+                    onClick={() => setIsCreateDialogOpen(true)}
+                    size="small"
+                    variant="contained"
+                >
+                    Add experiment
+                </Button>
+            )}
+
+            {isCreateDialogOpen && (
+                <CreateRecipeExperimentDialog
+                    onClose={() => setIsCreateDialogOpen(false)}
                     onCreated={handleExperimentCreated}
                     recipeId={recipeId}
                 />
