@@ -3,6 +3,8 @@ import Alert from '@mui/material/Alert';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -33,11 +35,23 @@ function NavigationButton({ children, to }) {
 }
 
 function AppLayout() {
+    const { pathname } = useLocation();
     const { logout } = useAuth();
+    const [menuAnchorEl, setMenuAnchorEl] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoggingOut, setIsLoggingOut] = useState(false);
+    const isMenuOpen = Boolean(menuAnchorEl);
+
+    const handleOpenMenu = (event) => {
+        setMenuAnchorEl(event.currentTarget);
+    };
+
+    const handleCloseMenu = () => {
+        setMenuAnchorEl(null);
+    };
 
     const handleLogout = async () => {
+        handleCloseMenu();
         setErrorMessage('');
         setIsLoggingOut(true);
 
@@ -68,7 +82,11 @@ function AppLayout() {
                         </Typography>
                     </Box>
 
-                    <Stack direction="row" spacing={1}>
+                    <Stack
+                        direction="row"
+                        spacing={1}
+                        sx={{ display: { sm: 'flex', xs: 'none' } }}
+                    >
                         <NavigationButton to="/overview">
                             Overview
                         </NavigationButton>
@@ -88,8 +106,62 @@ function AppLayout() {
                             {isLoggingOut ? 'Logging out...' : 'Log out'}
                         </Button>
                     </Stack>
+
+                    <Button
+                        aria-controls={isMenuOpen ? 'app-navigation-menu' : undefined}
+                        aria-expanded={isMenuOpen ? 'true' : undefined}
+                        aria-haspopup="menu"
+                        color="inherit"
+                        onClick={handleOpenMenu}
+                        size="small"
+                        sx={{ display: { sm: 'none', xs: 'inline-flex' } }}
+                    >
+                        Menu
+                    </Button>
                 </Toolbar>
             </AppBar>
+
+            <Menu
+                anchorEl={menuAnchorEl}
+                id="app-navigation-menu"
+                onClose={handleCloseMenu}
+                open={isMenuOpen}
+            >
+                <MenuItem
+                    aria-current={pathname === '/overview' ? 'page' : undefined}
+                    component={RouterLink}
+                    onClick={handleCloseMenu}
+                    selected={pathname === '/overview'}
+                    to="/overview"
+                >
+                    Overview
+                </MenuItem>
+                <MenuItem
+                    aria-current={pathname === '/recipes' ? 'page' : undefined}
+                    component={RouterLink}
+                    onClick={handleCloseMenu}
+                    selected={pathname === '/recipes'}
+                    to="/recipes"
+                >
+                    Recipes
+                </MenuItem>
+                <MenuItem
+                    aria-current={pathname === '/ingredients' ? 'page' : undefined}
+                    component={RouterLink}
+                    onClick={handleCloseMenu}
+                    selected={pathname === '/ingredients'}
+                    to="/ingredients"
+                >
+                    Ingredients
+                </MenuItem>
+                <MenuItem
+                    aria-busy={isLoggingOut}
+                    disabled={isLoggingOut}
+                    onClick={handleLogout}
+                >
+                    {isLoggingOut ? 'Logging out...' : 'Log out'}
+                </MenuItem>
+            </Menu>
 
             {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
 
