@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { AuthContext } from './authContext';
-import { ApiError } from '../services/apiClient';
+import { ApiError, registerUnauthorizedHandler } from '../services/apiClient';
 import { getCurrentUser, logout as logoutCurrentUser } from '../services/authService';
 
 async function loadCurrentUser() {
@@ -16,9 +17,11 @@ async function loadCurrentUser() {
 }
 
 export function AuthProvider({ children }) {
+    const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [authError, setAuthError] = useState(null);
+    const userRef = useRef(user);
 
     const refreshUser = async () => {
         setIsLoading(true);
@@ -40,12 +43,38 @@ export function AuthProvider({ children }) {
     };
 
     const logout = async () => {
-        await logoutCurrentUser();
+        try {
+            await logoutCurrentUser();
+        } catch (error) {
+            if (!(error instanceof ApiError && error.status === 401)) {
+                throw error;
+            }
+        }
+
         setUser(null);
+        setAuthError(null);
     };
 
     useEffect(() => {
+        userRef.current = user;
+    }, [user]);
+
+    useEffect(() => {
         let isMounted = true;
+        const handleUnauthorized = () => {
+            if (!isMounted) {
+                return;
+            }
+
+            setUser(null);
+            setAuthError(null);
+            setIsLoading(false);
+
+            if (userRef.current !== null) {
+                navigate('/login', { replace: true });
+            }
+        };
+        const unregisterUnauthorizedHandler = registerUnauthorizedHandler(handleUnauthorized);
 
         loadCurrentUser().then((currentUser) => {
             if (!isMounted) {
@@ -66,8 +95,9 @@ export function AuthProvider({ children }) {
 
         return () => {
             isMounted = false;
+            unregisterUnauthorizedHandler();
         };
-    }, []);
+    }, [navigate]);
 
     const contextValue = {
         user,

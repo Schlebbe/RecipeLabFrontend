@@ -25,6 +25,18 @@ const apiClient = axios.create({
     },
 });
 
+let unauthorizedHandler = null;
+
+export function registerUnauthorizedHandler(handler) {
+    unauthorizedHandler = handler;
+
+    return () => {
+        if (unauthorizedHandler === handler) {
+            unauthorizedHandler = null;
+        }
+    };
+}
+
 export async function apiRequest(path, options = {}) {
     const { body, headers, ...requestOptions } = options;
 
@@ -49,6 +61,10 @@ export async function apiRequest(path, options = {}) {
         const errorBody = axiosError?.response?.data;
         const errorMessage = errorBody?.title ?? errorBody?.detail ?? errorBody?.message ??
             (error instanceof Error ? error.message : 'Request failed.');
+
+        if (axiosError?.response?.status === 401) {
+            unauthorizedHandler?.();
+        }
 
         throw new ApiError(errorMessage, axiosError?.response?.status, errorBody, error);
     }
