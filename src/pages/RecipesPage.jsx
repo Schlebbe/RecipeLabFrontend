@@ -154,7 +154,7 @@ function RecipesPage() {
                 </Typography>
 
                 {isLoadingRecipes && (
-                    <Stack alignItems="center" role="status" aria-label="Loading recipes">
+                    <Stack role="status" aria-label="Loading recipes" sx={{ alignItems: 'center' }}>
                         <CircularProgress />
                     </Stack>
                 )}

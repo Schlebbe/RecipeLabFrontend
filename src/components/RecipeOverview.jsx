@@ -54,7 +54,7 @@ function RecipeOverview({ errorMessage, isLoading, statistics }) {
             </Typography>
 
             {isLoading && (
-                <Stack alignItems="center" role="status" aria-label="Loading overview">
+                <Stack role="status" aria-label="Loading overview" sx={{ alignItems: 'center' }}>
                     <CircularProgress />
                 </Stack>
             )}

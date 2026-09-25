@@ -7,7 +7,7 @@ import { Link as RouterLink } from 'react-router';
 function NotFoundPage() {
     return (
         <Container maxWidth="sm">
-            <Stack spacing={2} alignItems="center" textAlign="center">
+            <Stack spacing={2} sx={{ alignItems: 'center', textAlign: 'center' }}>
                 <Typography component="h1" variant="h2">
                     404
                 </Typography>

@@ -108,7 +108,7 @@ function RecipeExperimentList({ recipeId }) {
             </Typography>
 
             {isLoading && (
-                <Stack alignItems="center" role="status" aria-label="Loading experiments">
+                <Stack role="status" aria-label="Loading experiments" sx={{ alignItems: 'center' }}>
                     <CircularProgress size={24} />
                 </Stack>
             )}

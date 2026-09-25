@@ -31,9 +31,9 @@ function RecipeCard({ ingredients, onDelete, onEdit, recipe }) {
                 />
 
                 <Stack
-                    alignItems="flex-start"
                     direction={{ sm: 'row', xs: 'column' }}
                     spacing={1}
+                    sx={{ alignItems: 'flex-start' }}
                 >
                     <Button
                         aria-label={`Edit recipe ${recipe.name}`}

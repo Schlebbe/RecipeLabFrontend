@@ -16,7 +16,7 @@ function IngredientList({ errorMessage, ingredients, isLoading, onDelete, onEdit
             </Typography>
 
             {isLoading && (
-                <Stack alignItems="center" role="status" aria-label="Loading ingredients">
+                <Stack role="status" aria-label="Loading ingredients" sx={{ alignItems: 'center' }}>
                     <CircularProgress />
                 </Stack>
             )}

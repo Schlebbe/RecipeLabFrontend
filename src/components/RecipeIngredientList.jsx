@@ -120,7 +120,7 @@ function RecipeIngredientList({ ingredients, recipeId, refreshKey }) {
             </Typography>
 
             {isLoading && (
-                <Stack alignItems="center" role="status" aria-label="Loading recipe ingredients">
+                <Stack role="status" aria-label="Loading recipe ingredients" sx={{ alignItems: 'center' }}>
                     <CircularProgress size={24} />
                 </Stack>
             )}
