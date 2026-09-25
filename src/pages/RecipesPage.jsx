@@ -3,14 +3,10 @@ import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import CircularProgress from '@mui/material/CircularProgress';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import CreateRecipeDialog from '../components/CreateRecipeDialog';
+import DeleteConfirmationDialog from '../components/DeleteConfirmationDialog';
 import EditRecipeDialog from '../components/EditRecipeDialog';
 import RecipeCard from '../components/RecipeCard';
 import { getIngredients } from '../services/ingredientService';
@@ -202,33 +198,16 @@ function RecipesPage() {
                 />
             )}
 
-            <Dialog
-                fullWidth
-                maxWidth="sm"
+            <DeleteConfirmationDialog
+                errorMessage={deleteError}
+                isDeleting={isDeleting}
                 onClose={handleCloseDeleteDialog}
+                onConfirm={handleConfirmDelete}
                 open={recipeToDelete !== null}
+                title="Delete recipe?"
             >
-                <DialogTitle>Delete recipe?</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Are you sure you want to delete "{recipeToDelete?.name}"?
-                    </DialogContentText>
-
-                    {deleteError && <Alert severity="error" sx={{ mt: 2 }}>{deleteError}</Alert>}
-                </DialogContent>
-                <DialogActions>
-                    <Button disabled={isDeleting} onClick={handleCloseDeleteDialog}>
-                        Cancel
-                    </Button>
-                    <Button
-                        color="error"
-                        disabled={isDeleting}
-                        onClick={handleConfirmDelete}
-                    >
-                        {isDeleting ? 'Deleting...' : 'Delete'}
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                Are you sure you want to delete "{recipeToDelete?.name}"?
+            </DeleteConfirmationDialog>
 
         </Container>
     );

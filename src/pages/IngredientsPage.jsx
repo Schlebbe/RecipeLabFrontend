@@ -1,14 +1,8 @@
 import { useEffect, useState } from 'react';
-import Alert from '@mui/material/Alert';
-import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import DeleteConfirmationDialog from '../components/DeleteConfirmationDialog';
 import EditIngredientDialog from '../components/EditIngredientDialog';
 import IngredientForm from '../components/IngredientForm';
 import IngredientList from '../components/IngredientList';
@@ -126,33 +120,16 @@ function IngredientsPage() {
                 />
             )}
 
-            <Dialog
-                fullWidth
-                maxWidth="sm"
+            <DeleteConfirmationDialog
+                errorMessage={ingredientDeleteError}
+                isDeleting={isDeletingIngredient}
                 onClose={handleCloseIngredientDeleteDialog}
+                onConfirm={handleConfirmIngredientDelete}
                 open={ingredientToDelete !== null}
+                title="Delete ingredient?"
             >
-                <DialogTitle>Delete ingredient?</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Deleting this ingredient will also remove it from any recipes that use it. Are you sure you want to delete "{ingredientToDelete?.name}"?
-                    </DialogContentText>
-
-                    {ingredientDeleteError && <Alert severity="error" sx={{ mt: 2 }}>{ingredientDeleteError}</Alert>}
-                </DialogContent>
-                <DialogActions>
-                    <Button disabled={isDeletingIngredient} onClick={handleCloseIngredientDeleteDialog}>
-                        Cancel
-                    </Button>
-                    <Button
-                        color="error"
-                        disabled={isDeletingIngredient}
-                        onClick={handleConfirmIngredientDelete}
-                    >
-                        {isDeletingIngredient ? 'Deleting...' : 'Delete'}
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                Deleting this ingredient will also remove it from any recipes that use it. Are you sure you want to delete "{ingredientToDelete?.name}"?
+            </DeleteConfirmationDialog>
         </Container>
     );
 }

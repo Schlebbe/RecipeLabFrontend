@@ -2,17 +2,13 @@ import { useEffect, useState } from 'react';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import AddRecipeIngredientDialog from './AddRecipeIngredientDialog';
+import DeleteConfirmationDialog from './DeleteConfirmationDialog';
 import EditRecipeIngredientDialog from './EditRecipeIngredientDialog';
 import { deleteRecipeIngredient, getRecipeIngredients } from '../services/recipeIngredientService';
 
@@ -211,33 +207,18 @@ function RecipeIngredientList({ ingredients, recipeId, refreshKey }) {
                 )
             )}
 
-            <Dialog
-                fullWidth
-                maxWidth="sm"
+            <DeleteConfirmationDialog
+                actionLabel="Remove"
+                actionPendingLabel="Removing..."
+                errorMessage={deleteError}
+                isDeleting={isDeleting}
                 onClose={handleCloseDeleteDialog}
+                onConfirm={handleConfirmDelete}
                 open={recipeIngredientToDelete !== null}
+                title="Remove ingredient from recipe?"
             >
-                <DialogTitle>Remove ingredient from recipe?</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        This will only remove "{recipeIngredientToDelete?.ingredientName}" from this recipe. The ingredient itself will not be deleted. Are you sure you want to continue?
-                    </DialogContentText>
-
-                    {deleteError && <Alert severity="error" sx={{ mt: 2 }}>{deleteError}</Alert>}
-                </DialogContent>
-                <DialogActions>
-                    <Button disabled={isDeleting} onClick={handleCloseDeleteDialog}>
-                        Cancel
-                    </Button>
-                    <Button
-                        color="error"
-                        disabled={isDeleting}
-                        onClick={handleConfirmDelete}
-                    >
-                        {isDeleting ? 'Removing...' : 'Remove'}
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                This will only remove "{recipeIngredientToDelete?.ingredientName}" from this recipe. The ingredient itself will not be deleted. Are you sure you want to continue?
+            </DeleteConfirmationDialog>
 
             {recipeIngredientToEdit && (
                 <EditRecipeIngredientDialog

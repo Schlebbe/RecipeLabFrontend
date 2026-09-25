@@ -2,17 +2,13 @@ import { useEffect, useState } from 'react';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import CreateRecipeExperimentDialog from './CreateRecipeExperimentDialog';
+import DeleteConfirmationDialog from './DeleteConfirmationDialog';
 import EditRecipeExperimentDialog from './EditRecipeExperimentDialog';
 import { deleteRecipeExperiment, getRecipeExperiments } from '../services/recipeExperimentService';
 
@@ -195,33 +191,16 @@ function RecipeExperimentList({ recipeId }) {
                 />
             )}
 
-            <Dialog
-                fullWidth
-                maxWidth="sm"
+            <DeleteConfirmationDialog
+                errorMessage={deleteError}
+                isDeleting={isDeleting}
                 onClose={handleCloseDeleteDialog}
+                onConfirm={handleConfirmDelete}
                 open={experimentToDelete !== null}
+                title="Delete experiment?"
             >
-                <DialogTitle>Delete experiment?</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        This will permanently delete the experiment and its rating from this recipe. Are you sure you want to delete "{experimentToDelete?.preparationMethod}"?
-                    </DialogContentText>
-
-                    {deleteError && <Alert severity="error" sx={{ mt: 2 }}>{deleteError}</Alert>}
-                </DialogContent>
-                <DialogActions>
-                    <Button disabled={isDeleting} onClick={handleCloseDeleteDialog}>
-                        Cancel
-                    </Button>
-                    <Button
-                        color="error"
-                        disabled={isDeleting}
-                        onClick={handleConfirmDelete}
-                    >
-                        {isDeleting ? 'Deleting...' : 'Delete'}
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                This will permanently delete the experiment and its rating from this recipe. Are you sure you want to delete "{experimentToDelete?.preparationMethod}"?
+            </DeleteConfirmationDialog>
 
             {experimentToEdit && (
                 <EditRecipeExperimentDialog
