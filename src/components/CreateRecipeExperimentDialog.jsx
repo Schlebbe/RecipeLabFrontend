@@ -5,16 +5,16 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
+import ExperimentRatingField from './ExperimentRatingField';
 import { createRecipeExperiment } from '../services/recipeExperimentService';
 
 function CreateRecipeExperimentDialog({ onClose, onCreated, recipeId }) {
     const [preparationMethod, setPreparationMethod] = useState('');
     const [variationNotes, setVariationNotes] = useState('');
     const [resultNotes, setResultNotes] = useState('');
-    const [rating, setRating] = useState('');
+    const [rating, setRating] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -66,14 +66,14 @@ function CreateRecipeExperimentDialog({ onClose, onCreated, recipeId }) {
                 preparationMethod: trimmedPreparationMethod,
                 variationNotes: trimmedVariationNotes || null,
                 resultNotes: trimmedResultNotes || null,
-                rating: Number(rating),
+                rating,
             });
 
             onCreated(experiment);
             setPreparationMethod('');
             setVariationNotes('');
             setResultNotes('');
-            setRating('');
+            setRating(null);
         } catch (error) {
             setErrorMessage(error instanceof Error ? error.message : 'Unable to create the experiment.');
         } finally {
@@ -128,22 +128,7 @@ function CreateRecipeExperimentDialog({ onClose, onCreated, recipeId }) {
                             value={resultNotes}
                         />
 
-                        <TextField
-                            fullWidth
-                            label="Rating"
-                            name="rating"
-                            onChange={(event) => setRating(event.target.value)}
-                            required
-                            select
-                            value={rating}
-                        >
-                            <MenuItem value="">Select a rating</MenuItem>
-                            {[1, 2, 3, 4, 5].map((value) => (
-                                <MenuItem key={value} value={value}>
-                                    {value} / 5
-                                </MenuItem>
-                            ))}
-                        </TextField>
+                        <ExperimentRatingField onChange={setRating} value={rating} />
                     </Stack>
                 </DialogContent>
 

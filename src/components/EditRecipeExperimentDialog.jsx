@@ -5,16 +5,16 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
+import ExperimentRatingField from './ExperimentRatingField';
 import { updateRecipeExperiment } from '../services/recipeExperimentService';
 
 function EditRecipeExperimentDialog({ experiment, onClose, onUpdated }) {
     const [preparationMethod, setPreparationMethod] = useState(experiment.preparationMethod);
     const [variationNotes, setVariationNotes] = useState(experiment.variationNotes ?? '');
     const [resultNotes, setResultNotes] = useState(experiment.resultNotes ?? '');
-    const [rating, setRating] = useState(String(experiment.rating));
+    const [rating, setRating] = useState(experiment.rating);
     const [errorMessage, setErrorMessage] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -66,7 +66,7 @@ function EditRecipeExperimentDialog({ experiment, onClose, onUpdated }) {
                 preparationMethod: trimmedPreparationMethod,
                 variationNotes: trimmedVariationNotes || null,
                 resultNotes: trimmedResultNotes || null,
-                rating: Number(rating),
+                rating,
             });
 
             onUpdated(updatedExperiment);
@@ -123,21 +123,7 @@ function EditRecipeExperimentDialog({ experiment, onClose, onUpdated }) {
                             value={resultNotes}
                         />
 
-                        <TextField
-                            fullWidth
-                            label="Rating"
-                            name="rating"
-                            onChange={(event) => setRating(event.target.value)}
-                            required
-                            select
-                            value={rating}
-                        >
-                            {[1, 2, 3, 4, 5].map((value) => (
-                                <MenuItem key={value} value={value}>
-                                    {value} / 5
-                                </MenuItem>
-                            ))}
-                        </TextField>
+                        <ExperimentRatingField onChange={setRating} value={rating} />
                     </Stack>
                 </DialogContent>
                 <DialogActions>

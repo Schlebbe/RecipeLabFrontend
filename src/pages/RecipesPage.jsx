@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -132,25 +133,23 @@ function RecipesPage() {
 
     return (
         <PageContainer>
-            <Stack spacing={2}>
+            <Stack spacing={{ md: 4, xs: 3 }}>
                 <PageHeader
                     action={(
                         <Button
                             aria-haspopup="dialog"
                             onClick={() => setIsCreateDialogOpen(true)}
+                            startIcon={<AddOutlinedIcon />}
                             variant="contained"
                         >
                             Add recipe
                         </Button>
                     )}
+                    description="Track your recipes and experiments. Try new ideas, tweak ingredients, and find your favourites."
                     title="Recipes"
                 />
 
                 {ingredientError && <Alert severity="error">{ingredientError}</Alert>}
-
-                <Typography component="h2" variant="h4">
-                    My recipes
-                </Typography>
 
                 {isLoadingRecipes && (
                     <Stack role="status" aria-label="Loading recipes" sx={{ alignItems: 'center' }}>

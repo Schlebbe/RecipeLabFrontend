@@ -1,11 +1,17 @@
 import { useEffect, useState } from 'react';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import LocalFloristOutlinedIcon from '@mui/icons-material/LocalFloristOutlined';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
+import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import AddRecipeIngredientDialog from './AddRecipeIngredientDialog';
 import DeleteConfirmationDialog from './DeleteConfirmationDialog';
@@ -114,10 +120,32 @@ function RecipeIngredientList({ ingredients, recipeId, refreshKey }) {
     };
 
     return (
-        <Stack spacing={1}>
-            <Typography component="h4" variant="h6">
-                Ingredients
-            </Typography>
+        <Stack spacing={1.5}>
+            <Stack
+                direction={{ sm: 'row', xs: 'column' }}
+                spacing={1}
+                sx={{ alignItems: { sm: 'center', xs: 'flex-start' }, justifyContent: 'space-between' }}
+            >
+                <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                    <LocalFloristOutlinedIcon color="primary" />
+                    <Typography component="h4" variant="h5">
+                        Ingredients
+                    </Typography>
+                </Stack>
+
+                {!isLoading && !errorMessage && availableIngredients.length > 0 && (
+                    <Button
+                        aria-haspopup="dialog"
+                        onClick={() => setIsCreateDialogOpen(true)}
+                        size="small"
+                        startIcon={<AddOutlinedIcon />}
+                        sx={{ alignSelf: { sm: 'auto', xs: 'flex-start' } }}
+                        variant="outlined"
+                    >
+                        Add ingredient
+                    </Button>
+                )}
+            </Stack>
 
             {isLoading && (
                 <Stack role="status" aria-label="Loading recipe ingredients" sx={{ alignItems: 'center' }}>
@@ -130,45 +158,65 @@ function RecipeIngredientList({ ingredients, recipeId, refreshKey }) {
             )}
 
             {!isLoading && !errorMessage && recipeIngredients.length === 0 && (
-                <Typography>No ingredients added.</Typography>
+                <Typography color="text.secondary">No ingredients added yet.</Typography>
             )}
 
             {!isLoading && !errorMessage && recipeIngredients.length > 0 && (
-                <List disablePadding>
-                    {recipeIngredients.map((recipeIngredient, index) => (
+                <List disablePadding sx={{ display: 'grid', gap: 1 }}>
+                    {recipeIngredients.map((recipeIngredient) => (
                         <ListItem
                             disableGutters
-                            divider={index < recipeIngredients.length - 1}
                             key={recipeIngredient.ingredientId}
+                            sx={{
+                                bgcolor: 'background.paper',
+                                border: 1,
+                                borderColor: 'divider',
+                                borderRadius: 2,
+                                px: 1.5,
+                                py: 1,
+                            }}
                         >
                             <Stack
                                 direction={{ sm: 'row', xs: 'column' }}
                                 spacing={1}
-                                sx={{ width: '100%' }}
+                                sx={{ alignItems: { sm: 'center', xs: 'stretch' }, width: '100%' }}
                             >
                                 <ListItemText
                                     primary={recipeIngredient.ingredientName}
                                     secondary={recipeIngredient.quantity || undefined}
-                                    sx={{ minWidth: 0, overflowWrap: 'anywhere' }}
+                                    sx={{
+                                        minWidth: 0,
+                                        '& .MuiListItemText-primary': {
+                                            fontWeight: 600,
+                                            overflowWrap: 'anywhere',
+                                        },
+                                        '& .MuiListItemText-secondary': {
+                                            overflowWrap: 'anywhere',
+                                        },
+                                    }}
                                 />
-                                <Stack direction="row" spacing={1}>
-                                    <Button
-                                        aria-label={`Edit ${recipeIngredient.ingredientName} quantity`}
-                                        onClick={() => setRecipeIngredientToEdit(recipeIngredient)}
-                                        size="small"
-                                        variant="outlined"
-                                    >
-                                        Edit
-                                    </Button>
-                                    <Button
-                                        aria-label={`Delete ${recipeIngredient.ingredientName} from recipe`}
-                                        color="error"
-                                        onClick={() => handleRecipeIngredientDeleteClick(recipeIngredient)}
-                                        size="small"
-                                        variant="outlined"
-                                    >
-                                        Delete
-                                    </Button>
+                                <Stack direction="row" spacing={0.25} sx={{ alignSelf: { sm: 'auto', xs: 'flex-end' } }}>
+                                    <Tooltip title="Edit ingredient quantity">
+                                        <IconButton
+                                            aria-label={`Edit ${recipeIngredient.ingredientName} quantity`}
+                                            onClick={() => setRecipeIngredientToEdit(recipeIngredient)}
+                                            size="small"
+                                            sx={{ minHeight: 40, minWidth: 40 }}
+                                        >
+                                            <EditOutlinedIcon fontSize="small" />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="Remove ingredient">
+                                        <IconButton
+                                            aria-label={`Delete ${recipeIngredient.ingredientName} from recipe`}
+                                            color="error"
+                                            onClick={() => handleRecipeIngredientDeleteClick(recipeIngredient)}
+                                            size="small"
+                                            sx={{ minHeight: 40, minWidth: 40 }}
+                                        >
+                                            <DeleteOutlineOutlinedIcon fontSize="small" />
+                                        </IconButton>
+                                    </Tooltip>
                                 </Stack>
                             </Stack>
                         </ListItem>
@@ -176,36 +224,22 @@ function RecipeIngredientList({ ingredients, recipeId, refreshKey }) {
                 </List>
             )}
 
-            {!isLoading && !errorMessage && (
-                availableIngredients.length === 0 ? (
-                    <Typography>
-                        {ingredients.length === 0
-                            ? 'Create an ingredient before adding one to this recipe.'
-                            : 'All your ingredients are already added to this recipe.'}
-                    </Typography>
-                ) : (
-                    <>
-                        <Button
-                            aria-haspopup="dialog"
-                            onClick={() => setIsCreateDialogOpen(true)}
-                            size="small"
-                            sx={{ alignSelf: 'flex-start' }}
-                            variant="contained"
-                        >
-                            Add ingredient
-                        </Button>
+            {!isLoading && !errorMessage && availableIngredients.length === 0 && (
+                <Typography color="text.secondary">
+                    {ingredients.length === 0
+                        ? 'Create an ingredient before adding one to this recipe.'
+                        : 'All your ingredients are already added to this recipe.'}
+                </Typography>
+            )}
 
-                        {isCreateDialogOpen && (
-                            <AddRecipeIngredientDialog
-                                ingredients={ingredients}
-                                onAdded={handleRecipeIngredientAdded}
-                                onClose={() => setIsCreateDialogOpen(false)}
-                                recipeId={recipeId}
-                                recipeIngredients={recipeIngredients}
-                            />
-                        )}
-                    </>
-                )
+            {isCreateDialogOpen && (
+                <AddRecipeIngredientDialog
+                    ingredients={ingredients}
+                    onAdded={handleRecipeIngredientAdded}
+                    onClose={() => setIsCreateDialogOpen(false)}
+                    recipeId={recipeId}
+                    recipeIngredients={recipeIngredients}
+                />
             )}
 
             <DeleteConfirmationDialog

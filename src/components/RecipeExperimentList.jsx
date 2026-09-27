@@ -1,11 +1,17 @@
 import { useEffect, useState } from 'react';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
+import IconButton from '@mui/material/IconButton';
+import Paper from '@mui/material/Paper';
+import Rating from '@mui/material/Rating';
 import Stack from '@mui/material/Stack';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import CreateRecipeExperimentDialog from './CreateRecipeExperimentDialog';
 import DeleteConfirmationDialog from './DeleteConfirmationDialog';
@@ -102,10 +108,32 @@ function RecipeExperimentList({ recipeId }) {
     };
 
     return (
-        <Stack spacing={1}>
-            <Typography component="h4" variant="h6">
-                Experiments
-            </Typography>
+        <Stack spacing={1.5}>
+            <Stack
+                direction={{ sm: 'row', xs: 'column' }}
+                spacing={1}
+                sx={{ alignItems: { sm: 'center', xs: 'flex-start' }, justifyContent: 'space-between' }}
+            >
+                <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                    <ScienceOutlinedIcon color="primary" />
+                    <Typography component="h4" variant="h5">
+                        Experiments
+                    </Typography>
+                </Stack>
+
+                {!isLoading && !errorMessage && (
+                    <Button
+                        aria-haspopup="dialog"
+                        onClick={() => setIsCreateDialogOpen(true)}
+                        size="small"
+                        startIcon={<AddOutlinedIcon />}
+                        sx={{ alignSelf: { sm: 'auto', xs: 'flex-start' } }}
+                        variant="outlined"
+                    >
+                        Add experiment
+                    </Button>
+                )}
+            </Stack>
 
             {isLoading && (
                 <Stack role="status" aria-label="Loading experiments" sx={{ alignItems: 'center' }}>
@@ -118,70 +146,92 @@ function RecipeExperimentList({ recipeId }) {
             )}
 
             {!isLoading && !errorMessage && experiments.length === 0 && (
-                <Typography>No experiments yet.</Typography>
+                <Typography color="text.secondary">No experiments recorded yet.</Typography>
             )}
 
             {!isLoading && !errorMessage && experiments.length > 0 && (
-                <List disablePadding>
-                    {experiments.map((experiment, index) => {
-                        const notes = [
-                            experiment.variationNotes && `Variation: ${experiment.variationNotes}`,
-                            experiment.resultNotes && `Result: ${experiment.resultNotes}`,
-                            `Created ${new Date(experiment.createdAtUtc).toLocaleDateString()}`,
-                        ].filter(Boolean).join(' · ');
-
-                        return (
-                            <ListItem
-                                disableGutters
-                                divider={index < experiments.length - 1}
-                                key={experiment.id}
-                            >
+                <Stack spacing={1}>
+                    {experiments.map((experiment) => (
+                        <Paper
+                            component="article"
+                            key={experiment.id}
+                            sx={{ bgcolor: 'background.paper', p: { sm: 2, xs: 1.5 } }}
+                            variant="outlined"
+                        >
+                            <Stack spacing={1}>
                                 <Stack
                                     direction={{ sm: 'row', xs: 'column' }}
                                     spacing={1}
-                                    sx={{ width: '100%' }}
+                                    sx={{
+                                        alignItems: { sm: 'center', xs: 'flex-start' },
+                                        justifyContent: 'space-between',
+                                    }}
                                 >
-                                    <ListItemText
-                                        primary={`${experiment.preparationMethod} · ${experiment.rating}/5`}
-                                        secondary={notes}
-                                        sx={{ minWidth: 0, overflowWrap: 'anywhere' }}
-                                    />
-                                    <Stack direction="row" spacing={1}>
-                                        <Button
-                                            aria-label={`Edit ${experiment.preparationMethod} experiment`}
-                                            onClick={() => setExperimentToEdit(experiment)}
+                                    <Typography
+                                        component="h5"
+                                        sx={{ overflowWrap: 'anywhere' }}
+                                        variant="h6"
+                                    >
+                                        {experiment.preparationMethod}
+                                    </Typography>
+
+                                    <Stack direction="row" spacing={0.25} sx={{ alignItems: 'center' }}>
+                                        <Rating
+                                            aria-label={`${experiment.rating} out of 5 stars`}
+                                            getLabelText={(value) => `${value} out of 5 stars`}
+                                            max={5}
+                                            precision={1}
+                                            readOnly
                                             size="small"
-                                            variant="outlined"
-                                        >
-                                            Edit
-                                        </Button>
-                                        <Button
-                                            aria-label={`Delete ${experiment.preparationMethod} experiment`}
-                                            color="error"
-                                            onClick={() => handleExperimentDeleteClick(experiment)}
-                                            size="small"
-                                            variant="outlined"
-                                        >
-                                            Delete
-                                        </Button>
+                                            sx={{ color: 'secondary.main' }}
+                                            value={Number(experiment.rating)}
+                                        />
+                                        <Tooltip title="Edit experiment">
+                                            <IconButton
+                                                aria-label={`Edit ${experiment.preparationMethod} experiment`}
+                                                onClick={() => setExperimentToEdit(experiment)}
+                                                size="small"
+                                                sx={{ minHeight: 40, minWidth: 40 }}
+                                            >
+                                                <EditOutlinedIcon fontSize="small" />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <Tooltip title="Delete experiment">
+                                            <IconButton
+                                                aria-label={`Delete ${experiment.preparationMethod} experiment`}
+                                                color="error"
+                                                onClick={() => handleExperimentDeleteClick(experiment)}
+                                                size="small"
+                                                sx={{ minHeight: 40, minWidth: 40 }}
+                                            >
+                                                <DeleteOutlineOutlinedIcon fontSize="small" />
+                                            </IconButton>
+                                        </Tooltip>
                                     </Stack>
                                 </Stack>
-                            </ListItem>
-                        );
-                    })}
-                </List>
-            )}
 
-            {!isLoading && !errorMessage && (
-                <Button
-                    aria-haspopup="dialog"
-                    onClick={() => setIsCreateDialogOpen(true)}
-                    size="small"
-                    sx={{ alignSelf: 'flex-start' }}
-                    variant="contained"
-                >
-                    Add experiment
-                </Button>
+                                <Stack direction="row" spacing={0.75} sx={{ alignItems: 'center' }}>
+                                    <CalendarTodayOutlinedIcon color="action" fontSize="small" />
+                                    <Typography color="text.secondary" variant="body2">
+                                        Created {new Date(experiment.createdAtUtc).toLocaleDateString()}
+                                    </Typography>
+                                </Stack>
+
+                                {experiment.variationNotes && (
+                                    <Typography sx={{ overflowWrap: 'anywhere' }} variant="body2">
+                                        <strong>Variation:</strong> {experiment.variationNotes}
+                                    </Typography>
+                                )}
+
+                                {experiment.resultNotes && (
+                                    <Typography sx={{ overflowWrap: 'anywhere' }} variant="body2">
+                                        <strong>Result:</strong> {experiment.resultNotes}
+                                    </Typography>
+                                )}
+                            </Stack>
+                        </Paper>
+                    ))}
+                </Stack>
             )}
 
             {isCreateDialogOpen && (
