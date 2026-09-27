@@ -116,7 +116,7 @@ function RecipeExperimentList({ recipeId }) {
             >
                 <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
                     <ScienceOutlinedIcon color="primary" />
-                    <Typography component="h4" variant="h5">
+                    <Typography component="h3" variant="h5">
                         Experiments
                     </Typography>
                 </Stack>
@@ -168,7 +168,7 @@ function RecipeExperimentList({ recipeId }) {
                                     }}
                                 >
                                     <Typography
-                                        component="h5"
+                                        component="h4"
                                         sx={{ overflowWrap: 'anywhere' }}
                                         variant="h6"
                                     >

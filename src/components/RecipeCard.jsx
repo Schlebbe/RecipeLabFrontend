@@ -55,7 +55,7 @@ function RecipeCard({ ingredients, onDelete, onEdit, recipe }) {
                         </Box>
 
                         <Stack spacing={1} sx={{ flex: 1, minWidth: 0 }}>
-                            <Typography component="h3" sx={{ overflowWrap: 'anywhere' }} variant="h4">
+                            <Typography component="h2" sx={{ overflowWrap: 'anywhere' }} variant="h4">
                                 {recipe.name}
                             </Typography>
 

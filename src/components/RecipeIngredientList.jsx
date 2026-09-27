@@ -128,7 +128,7 @@ function RecipeIngredientList({ ingredients, recipeId, refreshKey }) {
             >
                 <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
                     <LocalFloristOutlinedIcon color="primary" />
-                    <Typography component="h4" variant="h5">
+                    <Typography component="h3" variant="h5">
                         Ingredients
                     </Typography>
                 </Stack>

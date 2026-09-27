@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { AuthContext } from './authContext';
 import { ApiError, registerUnauthorizedHandler } from '../services/apiClient';
 import { getCurrentUser, logout as logoutCurrentUser } from '../services/authService';
@@ -17,11 +17,13 @@ async function loadCurrentUser() {
 }
 
 export function AuthProvider({ children }) {
+    const location = useLocation();
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [authError, setAuthError] = useState(null);
     const userRef = useRef(user);
+    const isPublicRoute = location.pathname === '/login' || location.pathname === '/register';
 
     const refreshUser = async () => {
         setIsLoading(true);
@@ -76,6 +78,13 @@ export function AuthProvider({ children }) {
         };
         const unregisterUnauthorizedHandler = registerUnauthorizedHandler(handleUnauthorized);
 
+        if (isPublicRoute) {
+            return () => {
+                isMounted = false;
+                unregisterUnauthorizedHandler();
+            };
+        }
+
         loadCurrentUser().then((currentUser) => {
             if (!isMounted) {
                 return;
@@ -97,13 +106,13 @@ export function AuthProvider({ children }) {
             isMounted = false;
             unregisterUnauthorizedHandler();
         };
-    }, [navigate]);
+    }, [isPublicRoute, navigate]);
 
     const contextValue = {
         user,
-        isLoading,
-        isAuthenticated: user !== null,
-        authError,
+        isLoading: isPublicRoute ? false : isLoading,
+        isAuthenticated: !isPublicRoute && user !== null,
+        authError: isPublicRoute ? null : authError,
         refreshUser,
         logout,
     };
