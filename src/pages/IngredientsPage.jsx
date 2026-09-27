@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 import DeleteConfirmationDialog from '../components/DeleteConfirmationDialog';
 import EditIngredientDialog from '../components/EditIngredientDialog';
 import IngredientForm from '../components/IngredientForm';
 import IngredientList from '../components/IngredientList';
+import { PageContainer, PageHeader } from '../components/PageLayout';
 import { deleteIngredient, getIngredients } from '../services/ingredientService';
 
 function IngredientsPage() {
@@ -95,11 +94,9 @@ function IngredientsPage() {
     };
 
     return (
-        <Container maxWidth="lg">
+        <PageContainer>
             <Stack spacing={2}>
-                <Typography component="h1" variant="h3">
-                    Ingredients
-                </Typography>
+                <PageHeader title="Ingredients" />
 
                 <IngredientForm onCreated={refreshIngredients} />
 
@@ -130,7 +127,7 @@ function IngredientsPage() {
             >
                 Deleting this ingredient will also remove it from any recipes that use it. Are you sure you want to delete "{ingredientToDelete?.name}"?
             </DeleteConfirmationDialog>
-        </Container>
+        </PageContainer>
     );
 }
 

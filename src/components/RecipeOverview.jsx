@@ -7,6 +7,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { PageHeader } from './PageLayout';
 
 function TopRatedList({ idKey, items, nameKey, title }) {
     return (
@@ -49,9 +50,7 @@ function RecipeOverview({ errorMessage, isLoading, statistics }) {
 
     return (
         <Stack spacing={2}>
-            <Typography component="h1" variant="h3">
-                Overview
-            </Typography>
+            <PageHeader title="Overview" />
 
             {isLoading && (
                 <Stack role="status" aria-label="Loading overview" sx={{ alignItems: 'center' }}>

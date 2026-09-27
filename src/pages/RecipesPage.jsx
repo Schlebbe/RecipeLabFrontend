@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
 import CircularProgress from '@mui/material/CircularProgress';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import CreateRecipeDialog from '../components/CreateRecipeDialog';
 import DeleteConfirmationDialog from '../components/DeleteConfirmationDialog';
 import EditRecipeDialog from '../components/EditRecipeDialog';
+import { PageContainer, PageHeader } from '../components/PageLayout';
 import RecipeCard from '../components/RecipeCard';
 import { getIngredients } from '../services/ingredientService';
 import { deleteRecipe, getRecipes } from '../services/recipeService';
@@ -131,23 +131,22 @@ function RecipesPage() {
     };
 
     return (
-        <Container maxWidth="lg">
+        <PageContainer>
             <Stack spacing={2}>
-                <Typography component="h1" variant="h3">
-                    Recipes
-                </Typography>
+                <PageHeader
+                    action={(
+                        <Button
+                            aria-haspopup="dialog"
+                            onClick={() => setIsCreateDialogOpen(true)}
+                            variant="contained"
+                        >
+                            Add recipe
+                        </Button>
+                    )}
+                    title="Recipes"
+                />
 
                 {ingredientError && <Alert severity="error">{ingredientError}</Alert>}
-
-                <Button
-                    aria-haspopup="dialog"
-                    onClick={() => setIsCreateDialogOpen(true)}
-                    size="small"
-                    sx={{ alignSelf: 'flex-start' }}
-                    variant="contained"
-                >
-                    Add recipe
-                </Button>
 
                 <Typography component="h2" variant="h4">
                     My recipes
@@ -209,7 +208,7 @@ function RecipesPage() {
                 Are you sure you want to delete "{recipeToDelete?.name}"?
             </DeleteConfirmationDialog>
 
-        </Container>
+        </PageContainer>
     );
 }
 

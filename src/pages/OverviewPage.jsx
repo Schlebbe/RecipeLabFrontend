@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Container from '@mui/material/Container';
+import { PageContainer } from '../components/PageLayout';
 import RecipeOverview from '../components/RecipeOverview';
 import { getRecipeStatistics } from '../services/recipeService';
 
@@ -41,13 +41,13 @@ function OverviewPage() {
     }, []);
 
     return (
-        <Container maxWidth="lg">
+        <PageContainer>
             <RecipeOverview
                 errorMessage={errorMessage}
                 isLoading={isLoading}
                 statistics={statistics}
             />
-        </Container>
+        </PageContainer>
     );
 }
 
