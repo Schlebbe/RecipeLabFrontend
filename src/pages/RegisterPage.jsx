@@ -2,13 +2,12 @@ import { useState } from 'react';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
-import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { Link as RouterLink, useNavigate } from 'react-router';
+import AuthLayout from '../components/AuthLayout';
 import { ApiError } from '../services/apiClient';
 import { register } from '../services/authService';
 
@@ -79,73 +78,81 @@ function RegisterPage() {
     };
 
     return (
-        <Container maxWidth="sm" sx={{ py: 4 }}>
-            <Paper elevation={3} sx={{ p: { xs: 3, sm: 4 } }}>
-                <Stack spacing={3}>
-                    <Typography component="h1" variant="h4">
-                        Create a RecipeLab account
+        <AuthLayout>
+            <Stack spacing={{ sm: 4, xs: 3 }}>
+                <Box>
+                    <Typography component="h1" variant="h1">
+                        Create your RecipeLab account
                     </Typography>
+                    <Typography color="text.secondary" sx={{ mt: 2, maxWidth: 520 }} variant="body1">
+                        Start keeping track of your recipe experiments.
+                    </Typography>
+                </Box>
 
-                    {errorMessages.length > 0 && (
-                        <Alert severity="error">
-                            {errorMessages.length === 1 ? errorMessages[0] : (
-                                <Box component="ul" sx={{ m: 0, pl: 2 }}>
-                                    {errorMessages.map((message, index) => (
-                                        <li key={`${message}-${index}`}>{message}</li>
-                                    ))}
-                                </Box>
-                            )}
-                        </Alert>
-                    )}
+                {errorMessages.length > 0 && (
+                    <Alert severity="error">
+                        {errorMessages.length === 1 ? errorMessages[0] : (
+                            <Box component="ul" sx={{ m: 0, pl: 2 }}>
+                                {errorMessages.map((message, index) => (
+                                    <li key={`${message}-${index}`}>{message}</li>
+                                ))}
+                            </Box>
+                        )}
+                    </Alert>
+                )}
 
-                    <Stack component="form" spacing={2} onSubmit={handleSubmit} noValidate>
-                        <TextField
-                            autoComplete="email"
-                            autoFocus
-                            fullWidth
-                            label="Email"
-                            name="email"
-                            onChange={(event) => setEmail(event.target.value)}
-                            required
-                            type="email"
-                            value={email}
-                        />
-                        <TextField
-                            autoComplete="new-password"
-                            fullWidth
-                            label="Password"
-                            name="password"
-                            onChange={(event) => setPassword(event.target.value)}
-                            required
-                            type="password"
-                            value={password}
-                        />
-                        <TextField
-                            autoComplete="new-password"
-                            fullWidth
-                            label="Confirm password"
-                            name="confirmPassword"
-                            onChange={(event) => setConfirmPassword(event.target.value)}
-                            required
-                            type="password"
-                            value={confirmPassword}
-                        />
-                        <Button
-                            aria-busy={isSubmitting}
-                            disabled={isSubmitting}
-                            fullWidth
-                            type="submit"
-                            variant="contained"
-                        >
-                            {isSubmitting ? 'Creating account...' : 'Create account'}
-                        </Button>
-                        <Link component={RouterLink} to="/login" underline="hover" sx={{ alignSelf: 'center' }}>
-                            Already have an account? Log in
-                        </Link>
-                    </Stack>
+                <Stack component="form" spacing={2.5} onSubmit={handleSubmit} noValidate>
+                    <TextField
+                        autoComplete="email"
+                        autoFocus
+                        fullWidth
+                        label="Email"
+                        name="email"
+                        onChange={(event) => setEmail(event.target.value)}
+                        required
+                        type="email"
+                        value={email}
+                    />
+                    <TextField
+                        autoComplete="new-password"
+                        fullWidth
+                        label="Password"
+                        name="password"
+                        onChange={(event) => setPassword(event.target.value)}
+                        required
+                        type="password"
+                        value={password}
+                    />
+                    <TextField
+                        autoComplete="new-password"
+                        fullWidth
+                        label="Confirm password"
+                        name="confirmPassword"
+                        onChange={(event) => setConfirmPassword(event.target.value)}
+                        required
+                        type="password"
+                        value={confirmPassword}
+                    />
+                    <Button
+                        aria-busy={isSubmitting}
+                        disabled={isSubmitting}
+                        fullWidth
+                        size="large"
+                        type="submit"
+                        variant="contained"
+                    >
+                        {isSubmitting ? 'Creating account...' : 'Create account'}
+                    </Button>
                 </Stack>
-            </Paper>
-        </Container>
+
+                <Typography color="text.secondary" sx={{ textAlign: 'center' }} variant="body2">
+                    Already have an account?{' '}
+                    <Link component={RouterLink} to="/login" underline="hover">
+                        Log in
+                    </Link>
+                </Typography>
+            </Stack>
+        </AuthLayout>
     );
 }
 
