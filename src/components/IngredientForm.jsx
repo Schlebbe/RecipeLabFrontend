@@ -1,6 +1,10 @@
 import { useState } from 'react';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import LocalFloristOutlinedIcon from '@mui/icons-material/LocalFloristOutlined';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -42,34 +46,83 @@ function IngredientForm({ onCreated }) {
     };
 
     return (
-        <Stack component="form" spacing={2} onSubmit={handleSubmit} noValidate>
-            <Typography component="h2" variant="h4">
-                Add an ingredient
-            </Typography>
-
-            {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
-
-            <TextField
-                autoComplete="off"
-                fullWidth
-                label="Name"
-                name="name"
-                onChange={(event) => setName(event.target.value)}
-                required
-                value={name}
-            />
-
-            <Button
-                aria-busy={isSubmitting}
-                disabled={isSubmitting}
-                size="small"
-                sx={{ alignSelf: 'flex-start' }}
-                type="submit"
-                variant="contained"
+        <Paper
+            aria-labelledby="add-ingredient-heading"
+            component="section"
+            sx={{ p: { sm: 3, xs: 2 } }}
+            variant="outlined"
+        >
+            <Stack
+                direction={{ md: 'row', xs: 'column' }}
+                spacing={{ md: 4, xs: 2.5 }}
+                sx={{ alignItems: { md: 'center', xs: 'stretch' } }}
             >
-                {isSubmitting ? 'Creating...' : 'Create ingredient'}
-            </Button>
-        </Stack>
+                <Stack
+                    direction="row"
+                    spacing={2}
+                    sx={{ alignItems: 'flex-start', flex: { md: 1, xs: 'initial' }, minWidth: 0 }}
+                >
+                    <Box
+                        aria-hidden="true"
+                        sx={{
+                            alignItems: 'center',
+                            bgcolor: 'primary.light',
+                            borderRadius: '50%',
+                            color: 'primary.dark',
+                            display: 'flex',
+                            flexShrink: 0,
+                            height: { sm: 64, xs: 56 },
+                            justifyContent: 'center',
+                            width: { sm: 64, xs: 56 },
+                        }}
+                    >
+                        <LocalFloristOutlinedIcon sx={{ fontSize: { sm: 34, xs: 30 } }} />
+                    </Box>
+                    <Stack spacing={0.5} sx={{ minWidth: 0 }}>
+                        <Typography component="h2" id="add-ingredient-heading" variant="h4">
+                            Add an ingredient
+                        </Typography>
+                        <Typography color="text.secondary" variant="body2">
+                            Create an ingredient to use in your recipes.
+                        </Typography>
+                    </Stack>
+                </Stack>
+
+                <Stack
+                    component="form"
+                    onSubmit={handleSubmit}
+                    noValidate
+                    spacing={1.5}
+                    sx={{ flex: { md: 1.5, xs: 'initial' }, minWidth: 0 }}
+                >
+                    {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+
+                    <Stack direction={{ md: 'row', xs: 'column' }} spacing={1.5}>
+                        <TextField
+                            autoComplete="off"
+                            fullWidth
+                            label="Name"
+                            name="name"
+                            onChange={(event) => setName(event.target.value)}
+                            required
+                            sx={{ flex: 1, minWidth: 0 }}
+                            value={name}
+                        />
+
+                        <Button
+                            aria-busy={isSubmitting}
+                            disabled={isSubmitting}
+                            startIcon={<AddOutlinedIcon />}
+                            sx={{ flexShrink: 0, width: { md: 'auto', xs: '100%' } }}
+                            type="submit"
+                            variant="contained"
+                        >
+                            {isSubmitting ? 'Creating...' : 'Create ingredient'}
+                        </Button>
+                    </Stack>
+                </Stack>
+            </Stack>
+        </Paper>
     );
 }
 

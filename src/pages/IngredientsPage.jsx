@@ -95,8 +95,11 @@ function IngredientsPage() {
 
     return (
         <PageContainer>
-            <Stack spacing={2}>
-                <PageHeader title="Ingredients" />
+            <Stack spacing={{ md: 4, xs: 3 }}>
+                <PageHeader
+                    description="Manage the ingredients you use across your recipes."
+                    title="Ingredients"
+                />
 
                 <IngredientForm onCreated={refreshIngredients} />
 
