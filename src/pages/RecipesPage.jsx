@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
+import InputAdornment from '@mui/material/InputAdornment';
+import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import CreateRecipeDialog from '../components/CreateRecipeDialog';
 import DeleteConfirmationDialog from '../components/DeleteConfirmationDialog';
@@ -14,7 +18,9 @@ import { getIngredients } from '../services/ingredientService';
 import { deleteRecipe, getRecipes } from '../services/recipeService';
 
 function RecipesPage() {
-    const [recipes, setRecipes] = useState([]);
+    const [recipeResults, setRecipeResults] = useState(null);
+    const [searchInput, setSearchInput] = useState('');
+    const [query, setQuery] = useState({ search: '', page: 1 });
     const [isLoadingRecipes, setIsLoadingRecipes] = useState(true);
     const [recipeError, setRecipeError] = useState('');
     const [ingredients, setIngredients] = useState([]);
@@ -24,19 +30,22 @@ function RecipesPage() {
     const [isDeleting, setIsDeleting] = useState(false);
     const [deleteError, setDeleteError] = useState('');
     const [recipeToEdit, setRecipeToEdit] = useState(null);
+    const recipes = recipeResults?.items ?? [];
+    const searchIsTooLong = searchInput.length > 120;
 
     useEffect(() => {
         let isMounted = true;
+        const controller = new AbortController();
 
         async function loadRecipes() {
             try {
-                const userRecipes = await getRecipes();
+                const userRecipes = await getRecipes({ ...query, signal: controller.signal });
 
                 if (!isMounted) {
                     return;
                 }
 
-                setRecipes(userRecipes);
+                setRecipeResults(userRecipes);
             } catch (error) {
                 if (!isMounted) {
                     return;
@@ -54,8 +63,9 @@ function RecipesPage() {
 
         return () => {
             isMounted = false;
+            controller.abort();
         };
-    }, []);
+    }, [query]);
 
     useEffect(() => {
         let isMounted = true;
@@ -85,16 +95,34 @@ function RecipesPage() {
         };
     }, []);
 
-    const handleRecipeCreated = (recipe) => {
+    const reloadRecipes = (nextQuery) => {
         setRecipeError('');
-        setRecipes((currentRecipes) => [recipe, ...currentRecipes]);
+        setIsLoadingRecipes(true);
+        setQuery(nextQuery);
+    };
+
+    const handleSearch = (event) => {
+        event.preventDefault();
+
+        if (searchIsTooLong) {
+            return;
+        }
+
+        reloadRecipes({ search: searchInput.trim(), page: 1 });
+    };
+
+    const handleClearSearch = () => {
+        setSearchInput('');
+        reloadRecipes({ search: '', page: 1 });
+    };
+
+    const handleRecipeCreated = () => {
+        reloadRecipes({ ...query, page: 1 });
         setIsCreateDialogOpen(false);
     };
 
-    const handleRecipeUpdated = (updatedRecipe) => {
-        setRecipes((currentRecipes) => currentRecipes.map((recipe) => (
-            recipe.id === updatedRecipe.id ? updatedRecipe : recipe
-        )));
+    const handleRecipeUpdated = () => {
+        reloadRecipes({ ...query, page: recipeResults?.page ?? query.page });
         setRecipeToEdit(null);
     };
 
@@ -122,7 +150,7 @@ function RecipesPage() {
 
         try {
             await deleteRecipe(recipeToDelete.id);
-            setRecipes((currentRecipes) => currentRecipes.filter((recipe) => recipe.id !== recipeToDelete.id));
+            reloadRecipes({ ...query, page: recipeResults?.page ?? query.page });
             setRecipeToDelete(null);
         } catch (error) {
             setDeleteError(error instanceof Error ? error.message : 'Unable to delete the recipe.');
@@ -149,6 +177,46 @@ function RecipesPage() {
                     title="Recipes"
                 />
 
+                <Stack
+                    component="form"
+                    direction={{ sm: 'row', xs: 'column' }}
+                    onSubmit={handleSearch}
+                    role="search"
+                    spacing={1.5}
+                    sx={{ alignItems: { sm: 'flex-start', xs: 'stretch' } }}
+                >
+                    <TextField
+                        error={searchIsTooLong}
+                        fullWidth
+                        helperText={searchIsTooLong ? 'Search cannot be longer than 120 characters.' : undefined}
+                        label="Search recipes by name"
+                        name="recipeSearch"
+                        onChange={(event) => setSearchInput(event.target.value)}
+                        size="small"
+                        slotProps={{
+                            input: {
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <SearchOutlinedIcon color="action" />
+                                    </InputAdornment>
+                                ),
+                            },
+                        }}
+                        type="search"
+                        value={searchInput}
+                    />
+                    <Button disabled={searchIsTooLong} type="submit" variant="contained">
+                        Search
+                    </Button>
+                    <Button
+                        disabled={!searchInput && !query.search}
+                        onClick={handleClearSearch}
+                        variant="outlined"
+                    >
+                        Clear
+                    </Button>
+                </Stack>
+
                 {ingredientError && <Alert severity="error">{ingredientError}</Alert>}
 
                 {isLoadingRecipes && (
@@ -158,15 +226,31 @@ function RecipesPage() {
                 )}
 
                 {!isLoadingRecipes && recipeError && (
-                    <Alert severity="error">{recipeError}</Alert>
+                    <Alert
+                        action={(
+                            <Button color="inherit" onClick={() => reloadRecipes({ ...query })} size="small">
+                                Retry
+                            </Button>
+                        )}
+                        severity="error"
+                    >
+                        {recipeError}
+                    </Alert>
                 )}
 
                 {!isLoadingRecipes && !recipeError && recipes.length === 0 && (
-                    <Typography>No recipes yet.</Typography>
+                    <Typography role="status">
+                        {query.search ? 'No recipes match your search.' : 'No recipes yet.'}
+                    </Typography>
                 )}
 
                 {!isLoadingRecipes && !recipeError && recipes.length > 0 && (
                     <Stack spacing={2}>
+                        <Typography color="text.secondary" role="status" variant="body2">
+                            Showing {(recipeResults.page - 1) * recipeResults.pageSize + 1}
+                            {' - '}{Math.min(recipeResults.page * recipeResults.pageSize, recipeResults.totalCount)}
+                            {' of '}{recipeResults.totalCount} recipes
+                        </Typography>
                         {recipes.map((recipe) => (
                             <RecipeCard
                                 ingredients={ingredients}
@@ -176,6 +260,18 @@ function RecipesPage() {
                                 recipe={recipe}
                             />
                         ))}
+                        {recipeResults.totalPages > 1 && (
+                            <Pagination
+                                aria-label="Recipe pages"
+                                color="primary"
+                                count={recipeResults.totalPages}
+                                onChange={(_, page) => reloadRecipes({ ...query, page })}
+                                page={recipeResults.page}
+                                shape="rounded"
+                                siblingCount={0}
+                                sx={{ alignSelf: 'center' }}
+                            />
+                        )}
                     </Stack>
                 )}
 

@@ -1,7 +1,10 @@
 import { apiRequest } from './apiClient';
 
-export function getRecipes() {
-    return apiRequest('/Recipes');
+export function getRecipes({ search = '', page = 1, pageSize = 10, signal } = {}) {
+    return apiRequest('/Recipes', {
+        params: { search, page, pageSize },
+        signal,
+    });
 }
 
 export function getRecipeStatistics() {
